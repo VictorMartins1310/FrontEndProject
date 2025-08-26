@@ -2,7 +2,7 @@
 import { useTodoStore } from '@/stores/todoLists';
 import {  ref } from 'vue';
 
-let antwort = ref({
+const antwort = ref({
     todoListName: ""
 });
 
@@ -19,7 +19,7 @@ let type = ref("TaskList");
             <option value="TaskList" selected>Task List</option>
             <option value="ShoppingList">Shopping List</option>
         </select>
-        <input v-if="type === 'TaskList'" type="submit" value="Senden Task" v-on:click="todoStore.newTaskList(antwort)" />
-        <input v-if="type === 'ShoppingList'" type="submit" value="Senden Shop" v-on:click="todoStore.newShoppingList(antwort)" />
+        <input v-if="type === 'TaskList'" type="submit" value="Senden Task" v-on:click="todoStore.newTaskList()" />
+        <input v-if="type === 'ShoppingList'" type="submit" value="Senden Shop" v-on:click="todoStore.newShoppingList()" />
     </form>
 </template>

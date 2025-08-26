@@ -43,7 +43,7 @@ export const useAuthStore = defineStore('auth', () => {
         token.value = response.access_token;
 
         // Token speichern (vorsichtig sein mit XSS)
-        localStorage.setItem('token', token.value);
+        if (token.value) localStorage.setItem('token', token.value);
         isUserAuthenticated.value = true;
         return true;
       } catch (error) {

@@ -112,8 +112,8 @@ const taskItem = ref<TaskListItem>({
      * Todo
      * @param newTaskItem
      */
-    async function newTaskList(newTaskItem: TaskListItem){
-        alert("Function need to be Develop: " + newTaskItem);
+    async function newTaskList(){
+        alert("Function need to be Develop: ");
         return null;
     }
 
@@ -122,8 +122,8 @@ const taskItem = ref<TaskListItem>({
      * @param newShoppingItem
      * @returns
      */
-    async function newShoppingList(newShoppingItem: ShoppingListItem){
-        alert("Function need to be Develop: " + newShoppingItem);
+    async function newShoppingList(){
+        alert("Function need to be Develop: ");
         return null;
     }
     /**
