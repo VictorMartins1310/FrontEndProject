@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '@/views/HomeView.vue'
+import ToDoList from '@/views/ToDoList.vue'
+import RegisterView from '@/views/RegisterView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,7 +23,10 @@ const router = createRouter({
       path: '/:toDotype/:toDoListID',
       name: 'todolist',
       component: ToDoList,
-      props: true,
+      props: route => ({
+        toDotype: route.params.toDotype as string,
+        toDoListID: Number(route.params.toDoListID)
+      })
     },
     {
       path: '/register',
