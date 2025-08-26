@@ -17,9 +17,6 @@ async function getRequest(link: string){
 
 async function postRequest(link: string, data: object){
   const auth = useAuthStore();
-  console.log("ICH BIN REINGEKOMMEN: " + data);
-  console.log(baseUrl + link);
-  console.log(JSON.stringify(data))
   const response = await fetch(baseUrl + link, {
     method: 'POST',
     body: JSON.stringify(data),
