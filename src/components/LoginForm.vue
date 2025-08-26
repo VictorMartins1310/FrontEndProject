@@ -12,7 +12,7 @@ let email = ref(""), password = ref("");
     <!-- <div class="overlay"> -->
       <form class="login-box" v-on:submit.prevent="auth.login(email, password)">
         <h2>Login</h2>
-        <input name="email" v-model="email" type="text" placeholder="Benutzername" required>
+        <input name="email" v-model="email" type="text" placeholder="Benutzername" required autocomplete="off" />
         <input name="password" v-model="password" type="password" placeholder="Passwort" required>
         <button type="submit">Einloggen</button>
         <!-- <a v-on:click="switchForm()" v-if="!auth.isUserAuthenticated">Register</a> -->
