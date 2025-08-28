@@ -68,3 +68,9 @@ onMounted(async () =>
     </table>
   </form>
 </template>
+
+<style scoped>
+tr :hover {
+  scale: 1.1;
+}
+</style>
