@@ -27,13 +27,25 @@ onMounted(async () => {
   <button>New List</button>
   <h1>TodoLists</h1>
   <p v-if="!listLoaded">Loading...</p>
-  <RouterLink v-else v-for="element in todoStore.todoLists"
-    v-bind:key="element.todoListID"
-    v-bind:to="element.type + '/' + element.todoListID"
-    v-bind:toDoListID="Number(element.todoListID)"
-    v-bind:toDotype="element.type">
-        Name: {{ element.todoListName }} |
-        Creation Date: {{ new Date(element.creationDate).toLocaleString() }}
-  </RouterLink>
-  <NewList />
+  <table v-else >
+    <thead>
+      <tr>
+        <th>Creation Date</th>
+        <th>Name</th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr v-for="element in todoStore.todoLists" v-bind:key="element.todoListID">
+            <td>{{ new Date(element.creationDate).toLocaleString() }} </td>
+            <td>
+              <RouterLink v-bind:to="element.type + '/' + element.todoListID" v-bind:toDoListID="Number(element.todoListID)" v-bind:toDotype="element.type"> {{ element.todoListName }} </RouterLink>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2"> <NewList /></td>
+          </tr>
+        </tfoot>
+      </table>
 </template>
