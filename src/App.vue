@@ -31,10 +31,10 @@ if (auth.token && !auth.isTokenExpired()){
     </div>
   </header>
   <DashBoard />
-  <main v-if="auth.isUserAuthenticated">
+  <div v-if="auth.isUserAuthenticated">
     <RouterView />
     <button v-on:click="auth.logOut()">Log me Out</button>
-  </main>
+  </div>
   <LoginForm v-else />
   <PaypalSpenden />
 </template>
