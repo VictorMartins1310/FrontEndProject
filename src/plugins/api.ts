@@ -30,11 +30,20 @@ async function postRequest(link: string, data: object){
     const errorText = await response.text();
     throw new Error(`Request failed: ${response.status} ${response.statusText} – ${errorText}`);
   }
-
-
   return response.json();
 }
 
+async function deleteRequest(link: string){
+  const auth = useAuthStore();
+  await fetch(baseUrl + link, {
+    method: 'DELETE',
+    headers: {
+      Authorization: "Bearer " + auth.token,
+      "Content-Type": "application/json"
+  }
+})
+}
+
 export const API = {
-  getRequest, postRequest
+  getRequest, postRequest, deleteRequest
 }
