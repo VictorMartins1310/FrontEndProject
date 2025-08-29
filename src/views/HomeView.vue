@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import NewList from '@/views/NewList.vue';
-import { computed, onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useTodoStore } from '@/stores/todoLists';
 
@@ -12,13 +12,6 @@ const listLoaded = computed(() => {
   return todoStore.todoLists.length > 0;
 });
 
-async function loadLists() {
-  await todoStore.loadTodoLists();
-}
-
-onMounted(async () => {
-  loadLists();
-})
 
 </script>
 

@@ -1,6 +1,7 @@
 import { API } from '@/plugins/api';
 import { defineStore } from "pinia";
-import { ref } from 'vue';
+import { tokenToString } from 'typescript';
+import { reactive } from 'vue';
 
 export const useTodoStore = defineStore('todoLists', () => {
     const todoListsLink : string = "/todolist";
@@ -45,10 +46,10 @@ export const useTodoStore = defineStore('todoLists', () => {
         tasks: TaskListItem[]
     };
 
-    const todoLists = ref<TodoList[]>([]);
+    let todoLists = reactive<TodoList[]>([]);
 
-    const shoppingListItems = ref<ShoppingListItem[]>([]);
-    const shoppingList = ref<ShoppingList>(
+    let shoppingListItems = reactive<ShoppingListItem[]>([]);
+    let shoppingList = reactive<ShoppingList>(
         {
             todoListID: 0,
             todoListName: "",
@@ -59,8 +60,8 @@ export const useTodoStore = defineStore('todoLists', () => {
         }
     );
 
-    const taskListItems = ref<TaskListItem[]>([]);
-    const taskList = ref<TaskList>(
+    let taskListItems = reactive<TaskListItem[]>([]);
+    let taskList = reactive<TaskList>(
         {
             todoListID: 0,
             todoListName: "",
@@ -70,7 +71,7 @@ export const useTodoStore = defineStore('todoLists', () => {
         }
     );
 
-const shoppingItem = ref<ShoppingListItem>({
+const shoppingItem = reactive<ShoppingListItem>({
   name: "",
   brand: "",
   price: 0.01,
@@ -78,7 +79,7 @@ const shoppingItem = ref<ShoppingListItem>({
   type: ""
 });
 
-const taskItem = ref<TaskListItem>({
+const taskItem = reactive<TaskListItem>({
   task: "",
   done: false
 });
@@ -87,7 +88,11 @@ const taskItem = ref<TaskListItem>({
      * Todo
      */
     async function loadTodoLists(){
-        todoLists.value = await API.getRequest(todoListsLink);
+        const data: TodoList[] = await API.getRequest(todoListsLink);
+        if (todoLists.length > 0 ) todoLists.splice(0, todoLists.length); // Clear the array
+        if (data.length > 0) data.forEach((element: TodoList) => {
+            todoLists.push(element);
+        });
     }
 
     /**
@@ -95,8 +100,8 @@ const taskItem = ref<TaskListItem>({
      * @param idTodoList
      */
     async function loadShopItems(idTodoList: number) {
-        shoppingList.value = await API.getRequest(shoppingListsLink + idTodoList);
-        shoppingListItems.value = shoppingList.value.products
+        shoppingList = await API.getRequest(shoppingListsLink + idTodoList);
+        shoppingListItems = shoppingList.products
     }
 
     /**
@@ -104,17 +109,21 @@ const taskItem = ref<TaskListItem>({
      * @param idTodoList
      */
     async function loadTaskItems(idTodoList: number) {
-        taskList.value = await API.getRequest(taskListsLink + idTodoList);
-        taskListItems.value = taskList.value.tasks;
+        taskList = await API.getRequest(taskListsLink + idTodoList);
+        taskListItems = taskList.tasks;
     }
 
     /**
      * Todo
      * @param newTaskItem
      */
-    async function newTaskList(){
-        alert("Function need to be Develop: ");
-        return null;
+    async function newTaskList(name: string){
+        const newTaskList = {
+          todoListName: name
+        }
+        const data = await API.postRequest(todoListsLink + "/tasklist", newTaskList);
+        console.log(data);
+        todoLists.push(data);
     }
 
     /**
@@ -137,17 +146,17 @@ const taskItem = ref<TaskListItem>({
     async function addShopItem(idTodoList: number){
       const myLink: string = shoppingListsLink + idTodoList + "/products";
       const newItem: ShoppingListItem = {
-        brand: shoppingItem.value.brand,
-        name : shoppingItem.value.name,
-        price: shoppingItem.value.price,
-        qty: shoppingItem.value.qty,
-        type: shoppingItem.value.type
+        brand: shoppingItem.brand,
+        name : shoppingItem.name,
+        price: shoppingItem.price,
+        qty: shoppingItem.qty,
+        type: shoppingItem.type
       }
       await API.postRequest(myLink, newItem);
-      shoppingListItems.value.push(newItem);
-      shoppingItem.value.brand = "";
-      shoppingItem.value.name = "";
-      shoppingItem.value.qty = 1;
+      shoppingListItems.push(newItem);
+      shoppingItem.brand = "";
+      shoppingItem.name = "";
+      shoppingItem.qty = 1;
     }
 
     /**
@@ -157,17 +166,41 @@ const taskItem = ref<TaskListItem>({
      */
     async function addTaskItem(idTodoList: number){
       const newItem: TaskListItem = {
-        task:   taskItem.value.task,
-        done: taskItem.value.done
+        task:   taskItem.task,
+        done: taskItem.done
       }
       await API.postRequest(taskListsLink + idTodoList, newItem);
-      taskListItems.value.push(newItem);
-      taskItem.value.task = "";
-      taskItem.value.done = false;
+      taskListItems.push(newItem);
+      taskItem.task = "";
+      taskItem.done = false;
+    }
+
+    async function deleteTodoList(id: number, type: string){
+      console.log("TYPE : " + type);
+      console.log("ID : " + id);
+      let index: number = 0;
+      if (type === "shoppinglist"){
+        await API.deleteRequest(shoppingListsLink + id);
+        for (let i = 0; i < todoLists.length; i++) {
+          if (todoLists[i].todoListID === id){
+            index = i;
+            break;
+          }
+        }
+      } else if (type === "tasklist"){
+        await API.deleteRequest(taskListsLink + id);
+        for (let i = 0; i < todoLists.length; i++) {
+          if (todoLists[i].todoListID === id){
+            index = i;
+            break;
+          }
+        }
+      }
+      todoLists.splice(index, 1);
     }
 
     return {
         todoLists, shoppingList, taskList, shoppingListItems, taskListItems, shoppingItem, taskItem,
-        loadShopItems, loadTodoLists, loadTaskItems, addShopItem, addTaskItem, newShoppingList, newTaskList
+        loadShopItems, loadTodoLists, loadTaskItems, addShopItem, addTaskItem, newShoppingList, newTaskList, deleteTodoList
     };
 });
