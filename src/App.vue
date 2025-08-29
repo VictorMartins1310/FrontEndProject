@@ -5,8 +5,15 @@ import { onMounted } from 'vue';
 import PaypalSpenden from './components/PaypalSpenden.vue';
 import DashBoard from './views/DashBoard.vue';
 import LoginForm from './components/LoginForm.vue';
+import { useTodoStore } from './stores/todoLists';
 
 const auth = useAuthStore();
+const todoStore = useTodoStore();
+
+async function loadLists() {
+  await todoStore.loadTodoLists();
+}
+
 
 onMounted(() => {
 
@@ -15,6 +22,7 @@ if (auth.token && !auth.isTokenExpired()){
   if (auth.isTokenExpired())
     alert("Sitzung Abgelaufen");
  }
+  loadLists();
 })
 </script>
 

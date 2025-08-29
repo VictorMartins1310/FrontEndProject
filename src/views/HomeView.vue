@@ -38,14 +38,16 @@ onMounted(async () => {
         <tr v-for="element in todoStore.todoLists" v-bind:key="element.todoListID">
             <td>{{ new Date(element.creationDate).toLocaleString() }} </td>
             <td>
-              <RouterLink v-bind:to="element.type + '/' + element.todoListID" v-bind:toDoListID="Number(element.todoListID)" v-bind:toDotype="element.type"> {{ element.todoListName }} </RouterLink>
+              <RouterLink v-bind:to="element.type + '/' + element.todoListID" v-bind:toDoListID="Number(element.todoListID)" v-bind:toDotype="element.type"> {{ element.todoListName }}</RouterLink>
             </td>
+            <td><button v-on:click="todoStore.deleteTodoList(element.todoListID, element.type)">delete</button></td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
-            <td colspan="2"> <NewList /></td>
+            <td colspan="2"></td>
           </tr>
         </tfoot>
       </table>
+      <NewList />
 </template>
