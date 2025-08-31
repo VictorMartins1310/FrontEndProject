@@ -1,29 +1,16 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import { useAuthStore } from './stores/auth';
-import { onMounted } from 'vue';
-import PaypalSpenden from './components/PaypalSpenden.vue';
-import DashBoard from './views/DashBoard.vue';
-import LoginForm from './components/LoginForm.vue';
-import { useTodoStore } from './stores/todoLists';
+import { useAuthStore } from './stores/auth'
+import { computed } from 'vue'
+import PaypalSpenden from './components/PaypalSpenden.vue'
+import DashBoard from './views/DashBoard.vue'
+import LoginForm from './components/LoginForm.vue'
 
-const auth = useAuthStore();
-const todoStore = useTodoStore();
-
-async function loadLists() {
-  await todoStore.loadTodoLists();
-}
-
-
-onMounted(() => {
-
-if (auth.token && !auth.isTokenExpired()){
-  auth.isUserAuthenticated = true;
-  if (auth.isTokenExpired())
-    alert("Sitzung Abgelaufen");
- }
-  loadLists();
+const auth = useAuthStore()
+const userAuthenticated = computed(() => {
+  return (auth.token && !auth.isTokenExpired());
 })
+
 </script>
 
 <template>
@@ -34,12 +21,12 @@ if (auth.token && !auth.isTokenExpired()){
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/register" v-if="!auth.isUserAuthenticated">Register</RouterLink>
+        <RouterLink to="/register" v-if="!userAuthenticated">Register</RouterLink>
       </nav>
     </div>
   </header>
   <DashBoard />
-  <div v-if="auth.isUserAuthenticated">
+  <div v-if="userAuthenticated">
     <RouterView />
     <button v-on:click="auth.logOut()">Log me Out</button>
   </div>
