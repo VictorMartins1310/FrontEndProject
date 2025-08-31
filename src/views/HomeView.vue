@@ -6,18 +6,14 @@ import { useTodoStore } from '@/stores/todoLists';
 
 
 const todoStore = useTodoStore();
-//const listLoaded = ref<boolean>(false);
 
 const listLoaded = computed(() => {
   return todoStore.todoLists.length > 0;
 });
 
-
 </script>
 
 <template>
-  <button v-if="!listLoaded" v-on:click="loadLists()">Reload</button>
-  <button>New List</button>
   <h1>TodoLists</h1>
   <p v-if="!listLoaded">Loading...</p>
   <table v-else >
@@ -33,7 +29,9 @@ const listLoaded = computed(() => {
             <td>
               <RouterLink v-bind:to="element.type + '/' + element.todoListID" v-bind:toDoListID="Number(element.todoListID)" v-bind:toDotype="element.type"> {{ element.todoListName }}</RouterLink>
             </td>
-            <td><button v-on:click="todoStore.deleteTodoList(element.todoListID, element.type)">delete</button></td>
+            <td>
+              <button v-on:click="todoStore.deleteTodoList(element.todoListID, element.type)">delete</button>
+            </td>
           </tr>
         </tbody>
         <tfoot>
