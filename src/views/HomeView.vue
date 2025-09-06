@@ -4,7 +4,6 @@ import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useTodoStore } from '@/stores/todoLists';
 
-
 const todoStore = useTodoStore();
 
 const listLoaded = computed(() => {
@@ -30,7 +29,7 @@ const listLoaded = computed(() => {
               <RouterLink v-bind:to="element.type + '/' + element.todoListID" v-bind:toDoListID="Number(element.todoListID)" v-bind:toDotype="element.type"> {{ element.todoListName }}</RouterLink>
             </td>
             <td>
-              <button v-on:click="todoStore.deleteTodoList(element.todoListID, element.type)">delete</button>
+              <button v-on:click="todoStore.deleteTodoList(element.todoListID, element.type)"> X </button>
             </td>
           </tr>
         </tbody>
@@ -42,3 +41,17 @@ const listLoaded = computed(() => {
       </table>
       <NewList />
 </template>
+
+<style lang="css" scoped>
+tbody tr:hover {
+  scale: 1.05;
+}
+button {
+  font-weight: bold;
+  border-radius: 20%;
+  padding: 6px;
+}
+button:hover {
+  color: red;
+}
+</style>
