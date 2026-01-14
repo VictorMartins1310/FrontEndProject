@@ -1,19 +1,28 @@
 <script lang="ts" setup>
 import { useAuthStore } from '@/stores/auth';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const auth = useAuthStore();
 
-let email = ref(""), password = ref("");
+const email = ref(""), password = ref("");
+
+const showPassword = ref(false);
+const inputType = computed(() => {
+  if (showPassword.value) return "text";
+  return "password";
+})
 
 </script>
 
 <template>
     <!-- <div class="overlay"> -->
-      <form class="login-box" v-on:submit.prevent="auth.login(email, password)">
+      <form v-show="!auth.isUserAuthenticated" class="login-box" v-on:submit.prevent="auth.login(email, password)">
         <h2>Login</h2>
         <input name="email" v-model="email" type="text" placeholder="Benutzername" required autocomplete="off" />
-        <input name="password" v-model="password" type="password" placeholder="Passwort" required>
+        <div class="password-wrapper">
+          <input name="password" class="password-input" v-model="password" v-bind:type="inputType" placeholder="Passwort" required>
+          <input name="pwvisibility" class="toggle-checkbox" v-model="showPassword" type="checkbox" :title="showPassword ? 'Verbergen' : 'Anzeigen'" />
+        </div>
         <button type="submit">Einloggen</button>
         <!-- <a v-on:click="switchForm()" v-if="!auth.isUserAuthenticated">Register</a> -->
       </form>
@@ -21,6 +30,29 @@ let email = ref(""), password = ref("");
 </template>
 
 <style scoped>
+
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input {
+  width: 100%;
+  padding-right: 40px; /* Platz für die Checkbox */
+  box-sizing: border-box;
+}
+
+.toggle-checkbox {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+
+
+
     .overlay {
       position: fixed;
       top: 0;

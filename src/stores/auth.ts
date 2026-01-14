@@ -1,66 +1,66 @@
 // stores/authStore.ts
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref } from 'vue'
 import { API } from '@/plugins/api';
 
 export const useAuthStore = defineStore('auth', () => {
-  let token  = ref(localStorage.getItem('token'));
-  const isUserAuthenticated = ref(false);
-  const expireTime: string = getExpireTime();
 
-  function getExpireTime(): string {
-    if (token.value){
-      const payload = JSON.parse(atob(token.value.split('.')[1]));
-      const timestamp = payload.exp;
-      const date = new Date(timestamp * 1000);
-      return date.toLocaleString();
-    }
-    else return "Kein Token";
+  const token = ref(localStorage.getItem('token'));
+
+  function setToken(value: string) {
+    localStorage.setItem('token', value);
+    token.value = value;
+  }
+  function removeToken() {
+    localStorage.removeItem('token');
+    token.value = null;
   }
 
-  function isTokenExpired(): boolean {
-    if (token.value === null) return true;
-    try {
-      const payload = JSON.parse(atob(token.value.split('.')[1]));
-      const now = Math.floor(Date.now() / 1000);
-      return payload.exp < now;
-    } catch (e) {
-      return true; // Falls Token nicht lesbar ist, als abgelaufen behandeln
-    }
-  }
+  const expireTime = computed(() => {
+    if (!token.value) return new Date().toLocaleString();
+    const payload = JSON.parse(atob(token.value.split('.')[1]))
+    return new Date(payload.exp*1000).toLocaleString();
+  })
+
+  const isTokenExpired = computed(() => {
+    if (token.value)
+      try {
+        const payload = JSON.parse(atob(token.value.split('.')[1]))
+        const now = Math.floor(Date.now() / 1000);
+        const expired: boolean = payload.exp < now;
+        if (expired) removeToken();
+        return expired;
+      } catch (e) {
+        return true; // Falls Token nicht lesbar ist, als abgelaufen behandeln
+      }
+    return false;
+  });
+
+  const isUserAuthenticated = computed(() => {
+    return (token.value && !isTokenExpired.value);
+  })
 
   async function login(email: string, password: string) {
-    if (token.value === "" || token.value === null || isTokenExpired()){
-
       try {
-          const loginData = {
-                email: email,
-                password: password
-          }
-          const response = await API.postRequest("/login", loginData);
-
-        // Beispiel: Server gibt ein JWT zurück
-        token.value = response.access_token;
-
-        // Token speichern (vorsichtig sein mit XSS)
-        if (token.value) localStorage.setItem('token', token.value);
-        isUserAuthenticated.value = true;
-        return true;
+        const loginData = {
+          email: email,
+          password: password,
+        }
+        const response = await API.postRequest('/login', loginData)
+        setToken(response.access_token);
+        return isUserAuthenticated.value;
       } catch (error) {
-        console.error("Login fehlgeschlagen:", error)
-        return false;
+        console.error('Login fehlgeschlagen:', error)
+        return false
       }
-    }else alert("Sie sind schon Eingeloggt!");
   }
 
   function logOut(){
-    localStorage.removeItem("token");
-    token.value = null;
-    isUserAuthenticated.value  = false;
+    removeToken();
   }
 
   return {
-    login, logOut, isTokenExpired,
+    login, logOut,
     isUserAuthenticated, token, expireTime
   }
 })
