@@ -11,9 +11,12 @@ const todoStore = useTodoStore();
 const todoList = reactive([] as TodoItem[]);
 const completedTasks = reactive([] as TodoItem[]);
 
-const date1 = ref(new Date());
-const  date2 = ref(new Date(date1.value.getDate() + 7));
+const today = new Date();
+const date1 = ref(today);
+const date2 = ref(new Date(today.setDate(today.getDate() + 7)));
 
+console.log(date1.value.toISOString().split('T')[0]);
+console.log(date2.value.toISOString().split('T')[0]);
 
 onMounted(async() => {
   const data = await loadItems();
