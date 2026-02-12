@@ -43,10 +43,10 @@ const inputType = computed(() => {
 }
 
 .toggle-checkbox {
+  width: fit-content;
   position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
+  top: 25%;
+  right: 20px;
   cursor: pointer;
 }
 
