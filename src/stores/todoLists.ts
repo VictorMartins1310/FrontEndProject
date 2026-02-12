@@ -1,162 +1,50 @@
 import { API } from '@/plugins/api';
 import { defineStore } from "pinia";
-import { tokenToString } from 'typescript';
 import { reactive } from 'vue';
+import type {TodoItem, ShoppingList, ShoppingListItem, TaskList} from '@/types';
 
 export const useTodoStore = defineStore('todoLists', () => {
-    const todoListsLink : string = "/todolist";
-    const taskListsLink : string = todoListsLink + "/tasklist/";
-    const shoppingListsLink : string = todoListsLink + "/shoppinglist/  ";
+  const todoListsLink : string = "/todolist";
+  const taskListsLink : string = todoListsLink + "/tasklist/";
+  const shoppingListsLink : string = todoListsLink + "/shoppinglist/  ";
 
-    type TodoList = {
-        todoListID: number,
-        todoListName: string,
-        creationDate: Date,
-        active: boolean,
-        type: string
-    };
+  const todoList = reactive<TodoItem[]>([]);
+  const shoppingList = reactive<ShoppingList>({} as ShoppingList);
+  const taskList = reactive<TaskList>({} as TaskList);
+  const shoppingItem = reactive<ShoppingListItem>({} as ShoppingListItem);
 
-    type ShoppingListItem = {
-        name: string,
-        brand: string,
-        price: number,
-        qty: number,
-        type: string
-    };
+  async function getProductTypes(){
+    const data = await API.getRequest("/types");
+    return data;;
+}
 
-    type ShoppingList = {
-        todoListID: number,
-        todoListName: string,
-        creationDate: Date,
-        active: boolean,
-        marketName: string,
-        products: ShoppingListItem[]
-    };
-
-    type TaskListItem = {
-        task: string,
-        done: boolean
-    };
-
-    type TaskList = {
-        todoListID: number,
-        todoListName: string,
-        creationDate: Date,
-        active: boolean,
-        tasks: TaskListItem[]
-    };
-
-    let todoLists = reactive<TodoList[]>([]);
-
-    let shoppingListItems = reactive<ShoppingListItem[]>([]);
-    let shoppingList = reactive<ShoppingList>(
-        {
-            todoListID: 0,
-            todoListName: "",
-            creationDate: new Date,
-            active: false,
-            marketName: "",
-            products: []
-        }
-    );
-
-    let taskListItems = reactive<TaskListItem[]>([]);
-    let taskList = reactive<TaskList>(
-        {
-            todoListID: 0,
-            todoListName: "",
-            creationDate: new Date,
-            active: false,
-            tasks: []
-        }
-    );
-
-const shoppingItem = reactive<ShoppingListItem>({
-  name: "",
-  brand: "",
-  price: 0.01,
-  qty: 1,
-  type: ""
-});
-
-const taskItem = reactive<TaskListItem>({
-  task: "",
-  done: false
-});
+  /** Todo doc TODO REMOVE
+   * @returns  All Todo Items
+   */
+  /*
+ async function loadTodoLists(){
+    const data =  await API.getRequest(todoListsLink);
+    return data;
+  }*/
 
     /**
-     * Todo
-     */
-    async function loadTodoLists(){
-        const data: TodoList[] = await API.getRequest(todoListsLink);
-        if (todoLists.length > 0 ) todoLists.splice(0, todoLists.length); // Clear the array
-        if (data.length > 0) data.forEach((element: TodoList) => {
-            todoLists.push(element);
-        });
-    }
-
-    /**
-     * Todo
+     * Generic function to load items from a specific Todo List
+     * @param type
      * @param idTodoList
      */
-    async function loadShopItems(idTodoList: number) {
-        shoppingList = await API.getRequest(shoppingListsLink + idTodoList);
-        shoppingListItems = shoppingList.products
+    async function loadItems() {
+      const data = await API.getRequest(todoListsLink);
+      todoList.splice(0, todoList.length); // Clear the array
+      data.forEach((item: TodoItem) => {  todoList.push(item);  });
+      return data;
     }
 
-    /**
-     * Todo
-     * @param idTodoList
-     */
-    async function loadTaskItems(idTodoList: number) {
-        taskList = await API.getRequest(taskListsLink + idTodoList);
-        taskListItems = taskList.tasks;
+    async function getTaskList(idTodoList: number){
+      return  await API.getRequest(taskListsLink + idTodoList);
     }
 
-    /**
-     * Todo
-     * @param newTaskItem
-     */
-    async function newTaskList(name: string){
-        const newTaskList = {
-          todoListName: name
-        }
-        const data = await API.postRequest(todoListsLink + "/tasklist", newTaskList);
-        console.log(data);
-        todoLists.push(data);
-    }
-
-    /**
-     * Todo
-     * @param newShoppingItem
-     * @returns
-     */
-    async function newShoppingList(){
-        alert("Function need to be Develop: ");
-        return null;
-    }
-    /**
-     * Todo
-     * @param idTodoList
-     * @param newShoppingItem
-     */
-
-
-
-    async function addShopItem(idTodoList: number){
-      const myLink: string = shoppingListsLink + idTodoList + "/products";
-      const newItem: ShoppingListItem = {
-        brand: shoppingItem.brand,
-        name : shoppingItem.name,
-        price: shoppingItem.price,
-        qty: shoppingItem.qty,
-        type: shoppingItem.type
-      }
-      await API.postRequest(myLink, newItem);
-      shoppingListItems.push(newItem);
-      shoppingItem.brand = "";
-      shoppingItem.name = "";
-      shoppingItem.qty = 1;
+    async function getShoppingList(idTodoList: number){
+      return  await API.getRequest(shoppingListsLink + idTodoList);
     }
 
     /**
@@ -164,43 +52,71 @@ const taskItem = reactive<TaskListItem>({
      * @param idTodoList The Id from the Todo List
      * @author Victor Martins
      */
-    async function addTaskItem(idTodoList: number){
-      const newItem: TaskListItem = {
-        task:   taskItem.task,
-        done: taskItem.done
-      }
-      await API.postRequest(taskListsLink + idTodoList, newItem);
-      taskListItems.push(newItem);
-      taskItem.task = "";
-      taskItem.done = false;
+    async function addTaskItem(newItem: TaskList){
+      await API.postRequest(taskListsLink, newItem);
+      todoList.push(newItem);
+      newItem = {} as TaskList;;
+    }
+    /**
+     * Todo
+     * @param newTaskItem
+     */
+    async function newTaskList(name: string){
+        const newTaskList = {
+          task: name,
+          type: "Task"
+        }
+        const data = await API.postRequest(todoListsLink + "/tasklist", newTaskList);
+        console.log(data);
+    }
+
+    /**
+     * Todo
+     * @param newShoppingItem
+     * @returns
+     */
+    async function newShoppingList(market: string){
+      const newShoppingList = {
+          marketName: market
+        }
+        console.log(newShoppingList);
+        const data = await API.postRequest(todoListsLink + "/shoppinglist", newShoppingList);
+        console.log(data);
+    }
+    /**
+     * Todo
+     * @param idTodoList
+     */
+    async function addShopItem(idTodoList: number, newItem: ShoppingListItem  ){
+      const myLink: string = shoppingListsLink + idTodoList + "/products";
+      await API.postRequest(myLink, newItem);
+      return newItem;
     }
 
     async function deleteTodoList(id: number, type: string){
-      console.log("TYPE : " + type);
-      console.log("ID : " + id);
       let index: number = 0;
-      if (type === "shoppinglist"){
-        await API.deleteRequest(shoppingListsLink + id);
-        for (let i = 0; i < todoLists.length; i++) {
-          if (todoLists[i].todoListID === id){
-            index = i;
-            break;
+      let finalLink: string = shoppingListsLink;
+
+      if (todoList.length > 1){
+        if (type === "Task") finalLink = taskListsLink;
+
+        await API.deleteRequest(finalLink + id);
+          for (let i = 0; i < todoList.length; i++) {
+            if (todoList[i].todoID === id){
+              index = i;
+              break;
+            }
           }
-        }
-      } else if (type === "tasklist"){
-        await API.deleteRequest(taskListsLink + id);
-        for (let i = 0; i < todoLists.length; i++) {
-          if (todoLists[i].todoListID === id){
-            index = i;
-            break;
-          }
-        }
-      }
-      todoLists.splice(index, 1);
+        todoList.splice(index, 1);
+      }else alert("You cannot delete the last List");
+    }
+
+    async function setTaskDone(idTask: number){
+     return  await API.patchRequest(taskListsLink  + idTask + "/done", {});
     }
 
     return {
-        todoLists, shoppingList, taskList, shoppingListItems, taskListItems, shoppingItem, taskItem,
-        loadShopItems, loadTodoLists, loadTaskItems, addShopItem, addTaskItem, newShoppingList, newTaskList, deleteTodoList
-    };
+        todoList, shoppingList, taskList, shoppingItem,
+        loadItems, addShopItem, newShoppingList, newTaskList, deleteTodoList, getTaskList, getShoppingList, setTaskDone, addTaskItem, getProductTypes
+      }
 });
