@@ -1,6 +1,6 @@
 {
   "name": "frontendproject",
-  "version": "0.1.1",
+  "version": "0.22.3",
   "description": "FrontEnd part from Ironhack Backend Project",
   "author": "Victor Martins",
   "private": true,
@@ -21,6 +21,9 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/cli": "^7.4.3",
+    "@capacitor/core": "^7.4.3",
     "pinia": "^3.0.3",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1"
