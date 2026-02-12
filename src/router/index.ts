@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
-import ToDoList from '@/views/ToDoList.vue'
 import RegisterView from '@/views/RegisterView.vue'
 
 const router = createRouter({
@@ -19,15 +18,15 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
     },
-    {
-      path: '/:toDotype/:toDoListID',
-      name: 'todolist',
-      component: ToDoList,
-      props: route => ({
-        toDotype: route.params.toDotype as string,
-        toDoListID: Number(route.params.toDoListID)
-      })
-    },
+    // {
+    //   path: '/:toDotype/:toDoListID',
+    //   name: 'todolist',
+    //   component: ToDoList,
+    //   props: route => ({
+    //     toDotype: route.params.toDotype as string,
+    //     toDoListID: Number(route.params.toDoListID)
+    //   })
+    // },
     {
       path: '/register',
       name: 'register',
