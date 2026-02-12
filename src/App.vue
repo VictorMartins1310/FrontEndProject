@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 import { useAuthStore } from './stores/auth'
-import { computed, type ComputedRef, ref, watch } from 'vue'
 import PaypalSpenden from './components/PaypalSpenden.vue'
 import DashBoard from './views/DashBoard.vue'
 import LoginForm from './components/LoginForm.vue'
+import { computed } from 'vue'
 
 const auth = useAuthStore()
 
@@ -20,9 +20,13 @@ Notification.requestPermission().then((permission) => {
 function sendNotification() {
   new Notification('Titel der Nachricht', {
     body: 'Dies ist der Nachrichtentext',
-    icon: '/pfad/zum/icon.png', // optional
+    icon: '/public/favicon.ico', // optional
   })
 }
+
+const showLoginOptions = computed(() => {
+  return route.path != '/register' && route.path != '/about';
+})
 </script>
 
 <template>
@@ -38,9 +42,9 @@ function sendNotification() {
     </div>
   </header>
   <DashBoard v-show="auth.isUserAuthenticated" />
-  <LoginForm v-if="!auth.isUserAuthenticated && route.path != '/register'" />
+  <LoginForm v-if="!auth.isUserAuthenticated && showLoginOptions" />
   <RouterView v-else />
-  <button v-if="auth.isUserAuthenticated" v-on:click="auth.logOut()">Log me Out</button>
+  <button v-if="auth.isUserAuthenticated  && showLoginOptions" v-on:click="auth.logOut()">Log me Out</button>
   <PaypalSpenden />
   <button v-on:click="sendNotification()">Notification</button>
 </template>
