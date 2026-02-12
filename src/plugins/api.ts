@@ -36,11 +36,24 @@ async function postRequest(link: string, data: object){
       },
     })
   }
-    if (!response.ok) {
+  if (!response.ok) {
       const errorText = await response.text()
       throw new Error(`Request failed: ${response.status} ${response.statusText} – ${errorText}`)
     }
     return response.json()
+}
+
+async function patchRequest(link: string, data: object){
+  const auth = useAuthStore();
+  const resposnse = await fetch(baseUrl + link, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+    headers: {
+      Authorization: "Bearer " + auth.token,
+      "Content-Type": "application/json"
+    }
+  })
+  console.log(resposnse.statusText);
 }
 
 async function deleteRequest(link: string){
@@ -55,5 +68,5 @@ async function deleteRequest(link: string){
 }
 
 export const API = {
-  getRequest, postRequest, deleteRequest
+  getRequest, postRequest, patchRequest, deleteRequest
 }
