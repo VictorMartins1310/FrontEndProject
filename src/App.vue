@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 import { useAuthStore } from './stores/auth';
-import DashBoard from './views/DashBoard.vue';
 import LoginForm from './components/LoginForm.vue';
 import { computed, ref } from 'vue';
 import SideBar from './components/SideBar.vue';
@@ -50,7 +49,6 @@ function switchItemForm(value: boolean) {
   <LoginForm v-if="!auth.isUserAuthenticated && showLoginOptions " />
   <template v-else>
     <SideBar v-on:show-new-Item-Form="switchItemForm" />
-    <DashBoard  />
     <RouterView v-if="route.path==='/'" v-bind:showNewItemForm="visibleNewItemForm" v-on:show-new-item-form="switchItemForm" v-on:newNotification="sendNotification" />
     <RouterView v-else />
  </template>
