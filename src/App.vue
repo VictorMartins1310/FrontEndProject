@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { RouterLink, RouterView, useRoute } from 'vue-router'
-import { useAuthStore } from './stores/auth'
-import PaypalSpenden from './components/PaypalSpenden.vue'
-import DashBoard from './views/DashBoard.vue'
-import LoginForm from './components/LoginForm.vue'
-import { computed } from 'vue'
+import { RouterLink, RouterView, useRoute } from 'vue-router';
+import { useAuthStore } from './stores/auth';
+import DashBoard from './views/DashBoard.vue';
+import LoginForm from './components/LoginForm.vue';
+import { computed, ref } from 'vue';
+import SideBar from './components/SideBar.vue';
 
-const auth = useAuthStore()
-
-const route = useRoute()
+const auth = useAuthStore();
+const route = useRoute();
 
 Notification.requestPermission().then((permission) => {
   console.log('Permission: ' + permission)
@@ -17,22 +16,29 @@ Notification.requestPermission().then((permission) => {
   }
 })
 
-function sendNotification() {
-  new Notification('Titel der Nachricht', {
-    body: 'Dies ist der Nachrichtentext',
-    icon: '/public/favicon.ico', // optional
+function sendNotification(titel: string, body: string) {
+  new Notification(titel, {
+    body: body,
+    icon: '/favicon.ico', // optional
   })
 }
 
 const showLoginOptions = computed(() => {
   return route.path != '/register' && route.path != '/about';
 })
+
+const visibleNewItemForm = ref(false);
+
+function switchItemForm(value: boolean) {
+  visibleNewItemForm.value = value;
+  console.log(visibleNewItemForm.value);
+}
+
 </script>
 
 <template>
   <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>
@@ -41,12 +47,13 @@ const showLoginOptions = computed(() => {
       </nav>
     </div>
   </header>
-  <DashBoard v-show="auth.isUserAuthenticated" />
-  <LoginForm v-if="!auth.isUserAuthenticated && showLoginOptions" />
-  <RouterView v-else />
-  <button v-if="auth.isUserAuthenticated  && showLoginOptions" v-on:click="auth.logOut()">Log me Out</button>
-  <PaypalSpenden />
-  <button v-on:click="sendNotification()">Notification</button>
+  <LoginForm v-if="!auth.isUserAuthenticated && showLoginOptions " />
+  <template v-else>
+    <SideBar v-on:show-new-Item-Form="switchItemForm" />
+    <DashBoard  />
+    <RouterView v-if="route.path==='/'" v-bind:showNewItemForm="visibleNewItemForm" v-on:show-new-item-form="switchItemForm" v-on:newNotification="sendNotification" />
+    <RouterView v-else />
+ </template>
 </template>
 
 <style scoped>

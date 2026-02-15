@@ -2,11 +2,17 @@
 import { useTodoStore } from '@/stores/todoLists'
 import ShoppingListItem from '@/components/ShoppingListItem.vue';
 import TaskItem from '@/components/TaskItem.vue';
-import NewList from '@/components/NewList.vue';
 import { computed, onMounted, reactive, ref } from 'vue';
-import type { TodoItem } from '@/types';
+import type { ShoppingList, TaskList, TodoItem } from '@/types';
+import NewList from '@/components/NewList.vue';
 
 const todoStore = useTodoStore();
+
+const emit = defineEmits(['showNewItemForm', 'newNotification']);
+const props = defineProps<{
+  showNewItemForm: boolean
+}>();
+
 
 const todoList = reactive([] as TodoItem[]);
 const completedTasks = reactive([] as TodoItem[]);
@@ -15,28 +21,18 @@ const today = new Date();
 const date1 = ref(today);
 const date2 = ref(new Date(today.setDate(today.getDate() + 7)));
 
-console.log(date1.value.toISOString().split('T')[0]);
-console.log(date2.value.toISOString().split('T')[0]);
-
 onMounted(async() => {
   const data = await loadItems();
   data.forEach((element: TodoItem) => {
     if (!element.completed) todoList.push(element);
     else completedTasks.push(element);
     })
-    sendNotification("", "You have " + todoStore.todoList.length + " Tasks to do!");
-
+    if (todoStore.todoList.length > 0)
+      emit('newNotification', "Quantity of tasks", "You have " + todoStore.todoList.length + " Tasks to do!");
 })
 
 async function loadItems() {
   return await todoStore.loadItems();
-}
-
-function sendNotification(titel: string, body: string) {
-  new Notification(titel, {
-    body: body,
-    icon: '/favicon.ico', // optional
-  })
 }
 
 async function markDone(index: number, task: TodoItem) {
@@ -57,6 +53,16 @@ const nTodoItems = computed(() => {
   return todoStore.todoList.length;
 })
 
+async function getData(data: ShoppingList | TaskList) {
+  if (data.type === "Task") {
+    await todoStore.addTaskItem(data);
+  } else if (data.type === "ShoppingList") {
+     await todoStore.newShoppingList(data.marketName);
+  }
+  console.log(data);
+  emit('showNewItemForm', false);
+}
+
 </script>
 
 <template>
@@ -67,7 +73,7 @@ const nTodoItems = computed(() => {
           <h1>TodoLists</h1>
           </th>
           <th><button v-on:click="loadItems()">Load TodoLists</button></th>
-          <th><NewList /></th>
+          <th></th>
       </tr>
       <tr>
         <th colspan="3">
@@ -76,7 +82,14 @@ const nTodoItems = computed(() => {
         </th>
       </tr>
     </thead>
-    <tbody class="rounded">
+    <tbody v-if="props.showNewItemForm" class="rounded">
+      <tr>
+        <td><h1>0</h1></td>
+        <td class="todoItemCell"><NewList v-on:send-new-item="getData"/></td>
+        <td></td>
+      </tr>
+      </tbody>
+      <tbody v-if="!props.showNewItemForm" class="rounded">
       <tr v-for="(element, index) in todoList" v-bind:key="element.todoID" >
         <td style="text-align: center; width: min-content;"><h1>{{ index + 1 }}</h1></td>
         <td class="todoItemCell">

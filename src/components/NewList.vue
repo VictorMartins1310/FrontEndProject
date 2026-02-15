@@ -1,60 +1,58 @@
 <script setup lang="ts">
-import { useTodoStore } from '@/stores/todoLists';
-import type { TodoItem } from '@/types';
+import type { ShoppingList, TaskList } from '@/types';
 import { computed, ref } from 'vue'
 
- const antwort = ref({
-   type: "Task",
-   task: '',
- })
+const type = ref('Task');
 
-const todoStore = useTodoStore();
+const emit = defineEmits(['sendNewItem']);
 
-const type = ref('TaskList');
-
-
-const newTaskItem: TodoItem = {
+const newShopingListItem = ref<ShoppingList>({
   todoID: 0,
   type: type.value,
   completed: false,
-  creationDate: new Date()
-}
+  creationDate: new Date(),
+  marketName: "",
+  products: []
+});
+
+const newTaskItem = ref<TaskList>({
+  todoID: 0,
+  type: type.value,
+  completed: false,
+  creationDate: new Date(),
+  task: "",
+  done: false
+});
 
 const buttonDisabled = computed(() => {
-  if ( antwort.value.task === "") return true;
+  if (!newTaskItem.value.task && !newShopingListItem.value.marketName) return true;
   return false;
 })
 
-const formView = ref(false);
 
 async function save() {
-  if (type.value === "TaskList") {
-    await todoStore.newTaskList(antwort.value.task);
-  } else if (type.value === "ShoppingList") {
-    await todoStore.newShoppingList(antwort.value.task);
+  if (type.value === "ShoppingList") {
+    newShopingListItem.value.type = type.value
+    emit('sendNewItem', newShopingListItem.value);
+  } else if (type.value === "Task") {
+    newTaskItem.value.type = type.value;
+    emit('sendNewItem', newTaskItem.value);
   }
-  formView.value = false;
 }
 
 </script>
-
 <template>
-  <button v-show="!formView" style="padding: 12px;" v-on:click="formView = true">Add ➕</button>
-  <form v-show="formView" v-on:submit.prevent>
+  <form v-on:submit.prevent>
     <select v-model="type">
-      <option value="TaskList" selected>Task List</option>
+      <option value="Task" selected>Task List</option>
       <option value="ShoppingList">Shopping List</option>
     </select>
-    <div v-if="type === 'TaskList'">
+    <div>
       <label>Name: </label>
-      <input type="text" v-model="antwort.task" placeholder="To - Do List Name" />
-      <input  v-if="type === 'TaskList'" type="submit" value="💾 Save"  v-on:click="save()" v-bind:disabled="buttonDisabled" />
+      <input type="text" v-if="type ==='Task'" v-model="newTaskItem.task" placeholder="To - Do List Name" />
+      <input type="text" v-else v-model="newShopingListItem.marketName" placeholder="Market Name" />
   </div>
-  <div v-else>
-      <label>Name: </label>
-      <input type="text" v-model="antwort.task" placeholder="To - Do List Name" />
-      <input v-if="type === 'ShoppingList'" type="submit" value="Senden Shop" v-on:click="save()" v-bind:disabled="buttonDisabled"  />
-    </div>
     <input type="date" :value="newTaskItem.creationDate.toISOString().split('T')[0]" />
+   <input  type="submit" value="💾 Save"  v-on:click="save()" v-bind:disabled="buttonDisabled" />
   </form>
 </template>
