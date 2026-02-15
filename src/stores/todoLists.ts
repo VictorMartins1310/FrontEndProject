@@ -5,8 +5,8 @@ import type {TodoItem, ShoppingList, ShoppingListItem, TaskList} from '@/types';
 
 export const useTodoStore = defineStore('todoLists', () => {
   const todoListsLink : string = "/todolist";
-  const taskListsLink : string = todoListsLink + "/tasklist/";
-  const shoppingListsLink : string = todoListsLink + "/shoppinglist/  ";
+  const taskListsLink : string = todoListsLink + "/tasklist";
+  const shoppingListsLink : string = todoListsLink + "/shoppinglist";
 
   const todoList = reactive<TodoItem[]>([]);
   const shoppingList = reactive<ShoppingList>({} as ShoppingList);
@@ -17,15 +17,6 @@ export const useTodoStore = defineStore('todoLists', () => {
     const data = await API.getRequest("/types");
     return data;;
 }
-
-  /** Todo doc TODO REMOVE
-   * @returns  All Todo Items
-   */
-  /*
- async function loadTodoLists(){
-    const data =  await API.getRequest(todoListsLink);
-    return data;
-  }*/
 
     /**
      * Generic function to load items from a specific Todo List
@@ -40,11 +31,11 @@ export const useTodoStore = defineStore('todoLists', () => {
     }
 
     async function getTaskList(idTodoList: number){
-      return  await API.getRequest(taskListsLink + idTodoList);
+      return  await API.getRequest(taskListsLink + "/" + idTodoList);
     }
 
     async function getShoppingList(idTodoList: number){
-      return  await API.getRequest(shoppingListsLink + idTodoList);
+      return  await API.getRequest(shoppingListsLink + "/" +  idTodoList);
     }
 
     /**
@@ -53,21 +44,12 @@ export const useTodoStore = defineStore('todoLists', () => {
      * @author Victor Martins
      */
     async function addTaskItem(newItem: TaskList){
-      await API.postRequest(taskListsLink, newItem);
+      const saveItem = {
+        task: newItem.task,
+      }
+      await API.postRequest(taskListsLink, saveItem);
       todoList.push(newItem);
       newItem = {} as TaskList;;
-    }
-    /**
-     * Todo
-     * @param newTaskItem
-     */
-    async function newTaskList(name: string){
-        const newTaskList = {
-          task: name,
-          type: "Task"
-        }
-        const data = await API.postRequest(todoListsLink + "/tasklist", newTaskList);
-        console.log(data);
     }
 
     /**
@@ -79,10 +61,9 @@ export const useTodoStore = defineStore('todoLists', () => {
       const newShoppingList = {
           marketName: market
         }
-        console.log(newShoppingList);
-        const data = await API.postRequest(todoListsLink + "/shoppinglist", newShoppingList);
-        console.log(data);
+        return await API.postRequest(shoppingListsLink, newShoppingList);
     }
+
     /**
      * Todo
      * @param idTodoList
@@ -117,6 +98,6 @@ export const useTodoStore = defineStore('todoLists', () => {
 
     return {
         todoList, shoppingList, taskList, shoppingItem,
-        loadItems, addShopItem, newShoppingList, newTaskList, deleteTodoList, getTaskList, getShoppingList, setTaskDone, addTaskItem, getProductTypes
+        loadItems, newShoppingList, deleteTodoList, getTaskList, getShoppingList, setTaskDone, addTaskItem, getProductTypes, addShopItem
       }
 });
