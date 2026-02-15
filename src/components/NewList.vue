@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ShoppingList, TaskList } from '@/types';
 import { computed, ref } from 'vue'
+import NewProduct from './NewProduct.vue';
 
 const type = ref('Task');
 
@@ -48,11 +49,18 @@ async function save() {
       <option value="ShoppingList">Shopping List</option>
     </select>
     <div>
-      <label>Name: </label>
+      <label>Task </label>
       <input type="text" v-if="type ==='Task'" v-model="newTaskItem.task" placeholder="To - Do List Name" />
       <input type="text" v-else v-model="newShopingListItem.marketName" placeholder="Market Name" />
   </div>
+  <select>
+      <option value="Once" selected>Once</option>
+      <option value="Daily">Daily</option>
+      <option value="Weekly">Weekly</option>
+      <option value="Monthly">Monthly</option>
+    </select>
     <input type="date" :value="newTaskItem.creationDate.toISOString().split('T')[0]" />
-   <input  type="submit" value="💾 Save"  v-on:click="save()" v-bind:disabled="buttonDisabled" />
+    <input  type="submit" value="💾 Save"  v-on:click="save()" v-bind:disabled="buttonDisabled" />
+    <NewProduct v-if="type === 'ShoppingList'"/>
   </form>
 </template>

@@ -2,7 +2,7 @@
 import type { ShoppingList, ShoppingListItem } from '@/types';
 import { useTodoStore } from '@/stores/todoLists';
 import { computed, onMounted, ref } from 'vue';
-import NewItemList from './NewProduct.vue';
+import NewProductItem from './NewProduct.vue';
 
 type Prop = {
    todoID: number,
@@ -50,6 +50,8 @@ async function showProductList(){
     isProductListVisible.value.visible = true;
   }
 }
+
+const addNewProduct = ref(false);;
 </script>
 <template>
   <h2>
@@ -75,9 +77,15 @@ async function showProductList(){
       <td>{{ product.brand }}</td>
       <td style="width: auto; max-width: 16ch; text-align: right;">{{ product.price }} €</td>
       <td>{{ product.type }}</td>
-      <td><button>✔</button></td>
+      <td><button style="padding: 7px;">✔</button></td>
     </tr>
-    <NewItemList v-on:addNewProduct="addFromEmit" />
+    <NewProductItem v-if="addNewProduct" v-on:addNewProduct="addFromEmit" />
+    <tr>
+      <td colspan="6" style="text-align : center;">
+        <button v-if="!addNewProduct" v-on:click="addNewProduct=true">➕ Add Product</button>
+        <button v-if="addNewProduct" v-on:click="addNewProduct=false">Done</button>
+      </td>
+    </tr>
     </tbody>
   </table>
 

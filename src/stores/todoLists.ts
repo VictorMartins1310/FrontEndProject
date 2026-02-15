@@ -69,7 +69,7 @@ export const useTodoStore = defineStore('todoLists', () => {
      * @param idTodoList
      */
     async function addShopItem(idTodoList: number, newItem: ShoppingListItem  ){
-      const myLink: string = shoppingListsLink + idTodoList + "/products";
+      const myLink: string = shoppingListsLink + "/" + idTodoList + "/products";
       await API.postRequest(myLink, newItem);
       return newItem;
     }

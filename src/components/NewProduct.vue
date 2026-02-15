@@ -17,8 +17,6 @@ const isFormInValid = computed(() => {
   return (isEmpty(newShopItem.name) || isEmpty(newShopItem.brand)) ;
 } )
 
-const newItemVisibility = ref(false);
-
 onMounted(async () => {
   newShopItem.qty = 1;
   newShopItem.price = 0.01;
@@ -28,7 +26,7 @@ onMounted(async () => {
 
 </script>
 <template>
-    <tr v-show="newItemVisibility">
+    <tr >
       <td><input name="qty" class="fitNumbers" v-model="newShopItem.qty" type="number" min="1" placeholder="1" /></td>
       <td><input maxlength="32" style="min-width: 12ch;  width:fit-content; max-width: 18ch;" name="name"  v-model="newShopItem.name" type="text" placeholder="Product" autocomplete="off"/></td>
       <td><input maxlength="32" style="min-width: 06ch; width: fit-content; max-width: 12ch;" name="brand" v-model="newShopItem.brand" type="text" placeholder="Brand " /></td>
@@ -39,15 +37,9 @@ onMounted(async () => {
         </select>
     </td>
     <td>
-      <button v-show="!newItemVisibility" v-on:click="newItemVisibility = true">➕ Add Product</button>
-      <button v-show="newItemVisibility" v-on:click="$emit('addNewProduct', newShopItem)" v-bind:disabled="isFormInValid">➕ </button>
+      <button style="padding: 5px" v-on:click="$emit('addNewProduct', newShopItem)" v-bind:disabled="isFormInValid">➕ </button>
     </td>
   </tr>
-  <tr>
-    <td colspan="6" style="text-align : center;">
-      <button v-show="!newItemVisibility" v-on:click="newItemVisibility = true">➕ Add Product</button>
-    </td>
-    </tr>
 </template>
 <style scoped>
 .fitNumbers{
