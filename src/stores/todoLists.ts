@@ -1,14 +1,15 @@
 import { API } from '@/plugins/api';
 import { defineStore } from "pinia";
 import { reactive } from 'vue';
-import type {TodoItem, ShoppingList, ShoppingListItem, TaskList} from '@/types';
+import type { ShoppingList, ShoppingListItem, TaskList} from '@/types';
 
 export const useTodoStore = defineStore('todoLists', () => {
   const todoListsLink : string = "/todolist";
   const taskListsLink : string = todoListsLink + "/tasklist";
   const shoppingListsLink : string = todoListsLink + "/shoppinglist";
 
-  const todoList = reactive<TodoItem[]>([]);
+  type TodoListItem =  ShoppingList | TaskList;
+  const todoList = reactive<TodoListItem[]>([]);
   const shoppingList = reactive<ShoppingList>({} as ShoppingList);
   const taskList = reactive<TaskList>({} as TaskList);
   const shoppingItem = reactive<ShoppingListItem>({} as ShoppingListItem);
@@ -26,7 +27,7 @@ export const useTodoStore = defineStore('todoLists', () => {
     async function loadItems() {
       const data = await API.getRequest(todoListsLink);
       todoList.splice(0, todoList.length); // Clear the array
-      data.forEach((item: TodoItem) => {  todoList.push(item);  });
+      data.forEach((item: TodoListItem) => {  todoList.push(item);  });
       return data;
     }
 
@@ -47,9 +48,10 @@ export const useTodoStore = defineStore('todoLists', () => {
       const saveItem = {
         task: newItem.task,
       }
-      await API.postRequest(taskListsLink, saveItem);
+     const returnItem = await API.postRequest(taskListsLink, saveItem);
       todoList.push(newItem);
-      newItem = {} as TaskList;;
+      newItem = {} as TaskList;
+      return returnItem;
     }
 
     /**

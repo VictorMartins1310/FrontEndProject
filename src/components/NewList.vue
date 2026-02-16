@@ -9,7 +9,7 @@ const emit = defineEmits(['sendNewItem']);
 
 const newShopingListItem = ref<ShoppingList>({
   todoID: 0,
-  type: type.value,
+  type: "ShoppingList",
   completed: false,
   creationDate: new Date(),
   marketName: "",
@@ -18,7 +18,7 @@ const newShopingListItem = ref<ShoppingList>({
 
 const newTaskItem = ref<TaskList>({
   todoID: 0,
-  type: type.value,
+  type: "Task",
   completed: false,
   creationDate: new Date(),
   task: "",

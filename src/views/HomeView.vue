@@ -3,7 +3,7 @@ import { useTodoStore } from '@/stores/todoLists'
 import ShoppingListItem from '@/components/ShoppingListItem.vue';
 import TaskItem from '@/components/TaskItem.vue';
 import { computed, onMounted, reactive, ref } from 'vue';
-import type { ShoppingList, TaskList, TodoItem } from '@/types';
+import type { ShoppingList, TaskList } from '@/types';
 import NewList from '@/components/NewList.vue';
 
 const todoStore = useTodoStore();
@@ -13,9 +13,9 @@ const props = defineProps<{
   showNewItemForm: boolean
 }>();
 
-
-const todoList = reactive([] as TodoItem[]);
-const completedTasks = reactive([] as TodoItem[]);
+type TodoListItem =  ShoppingList | TaskList;
+const completedTasks = reactive([] as TodoListItem[]);
+const todoList = reactive([] as TodoListItem[]);
 
 const today = new Date();
 const date1 = ref(today);
@@ -23,7 +23,7 @@ const date2 = ref(new Date(today.setDate(today.getDate() + 7)));
 
 onMounted(async() => {
   const data = await loadItems();
-  data.forEach((element: TodoItem) => {
+  data.forEach((element: TodoListItem) => {
     if (!element.completed) todoList.push(element);
     else completedTasks.push(element);
     })
@@ -35,13 +35,13 @@ async function loadItems() {
   return await todoStore.loadItems();
 }
 
-async function markDone(index: number, task: TodoItem) {
+async function markDone(index: number, task: TodoListItem) {
   await todoStore.setTaskDone(task.todoID);
   completedTasks.push(task);
   todoList.splice(index, 1);
 }
 
-async function markUndone(index: number, task: TodoItem){
+async function markUndone(index: number, task: TodoListItem) {
   await todoStore.setTaskDone(task.todoID);
   todoList.push(task);
   completedTasks.splice(index, 1);
@@ -53,11 +53,15 @@ const nTodoItems = computed(() => {
   return todoStore.todoList.length;
 })
 
-async function getData(data: ShoppingList | TaskList) {
+async function getData(data: TodoListItem) {
   if (data.type === "Task") {
-    await todoStore.addTaskItem(data);
+    const newT: TaskList = await todoStore.addTaskItem(data);
+    todoList.push(newT);
+    console.log(newT);
   } else if (data.type === "ShoppingList") {
-     await todoStore.newShoppingList(data.marketName);
+     const newS = await todoStore.newShoppingList(data.marketName);
+     console.log(newS);
+      todoList.push(newS);
   }
   console.log(data);
   emit('showNewItemForm', false);
@@ -82,6 +86,18 @@ async function getData(data: ShoppingList | TaskList) {
         </th>
       </tr>
     </thead>
+    <tbody v-if ="todoList.length === 0" class="rounded">
+      <tr>
+        <td colspan="3" style="text-align: center;"><h1>No TodoLists yet!</h1></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>
+        <NewList  v-on:send-new-item="getData"/>
+        </td>
+        <td></td>
+      </tr>
+    </tbody>
     <tbody v-if="props.showNewItemForm" class="rounded">
       <tr>
         <td><h1>0</h1></td>
