@@ -4,15 +4,10 @@ import { useTodoStore } from '@/stores/todoLists';
 import { computed, onMounted, ref } from 'vue';
 import NewProductItem from './NewProduct.vue';
 
-type Prop = {
-   todoID: number,
-   type: string
-}
-
-const props = defineProps<{ elem: Prop}>();
+const props = defineProps<{todoID: number}>();
 const todoStore = useTodoStore();
 const shoppingList = ref<ShoppingList>({} as ShoppingList);
-const productList = ref<ShoppingListItem []>([{} as ShoppingListItem]);
+const productList = ref<ShoppingListItem []>([] as ShoppingListItem[]);
 let creationDate: Date = new Date();
 
 const nProdutcs = computed(() => {
@@ -21,16 +16,33 @@ const nProdutcs = computed(() => {
 
 async function addFromEmit(newShopItem: ShoppingListItem) {
   console.log(newShopItem);
-  await todoStore.addShopItem(props.elem.todoID, newShopItem);
-  productList.value.push(newShopItem);
+  let toSave: ShoppingListItem = {} as ShoppingListItem;
+  toSave ={
+    productID: 0,
+    name: newShopItem.name,
+    brand: newShopItem.brand,
+    price: newShopItem.price,
+    qty: newShopItem.qty,
+    type: newShopItem.type,
+    bought: false
+  };
+  await todoStore.addShopItem(props.todoID, toSave);
+  productList.value.push(toSave);
+  newShopItem.name = "";
+  newShopItem.brand = "";
+  newShopItem.price = 0.01;
+  newShopItem.qty = 1;
+  newShopItem.type = "Other";
+  newShopItem.bought = false;
+
 }
 
 onMounted(async () => {
-  shoppingList.value = await todoStore.getShoppingList(props.elem.todoID);
+  shoppingList.value = await todoStore.getShoppingList(props.todoID);
   creationDate = new Date(shoppingList.value.creationDate);
-  shoppingList.value.products.forEach(eleme => {
-    productList.value.push(eleme);
-  })
+      shoppingList.value.products.forEach(eleme => {
+      productList.value.push(eleme);
+    })
 
   isProductListVisible.value.text = "Show " + nProdutcs.value + " Products"
 });

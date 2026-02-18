@@ -1,7 +1,6 @@
 export  interface  TodoItem {
   todoID: number,
   creationDate: Date,
-  type: "Task" | "ShoppingList",
   completed: boolean,
 };
 
@@ -24,5 +23,7 @@ export interface ShoppingList extends TodoItem {
 export interface TaskList extends TodoItem{
   type: "Task",
   task: string,
-  done: boolean
+  frequency: string
 };
+
+  export type TodoListItem =  ShoppingList | TaskList;

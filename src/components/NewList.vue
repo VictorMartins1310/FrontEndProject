@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ShoppingList, TaskList } from '@/types';
+import type { ShoppingList, ShoppingListItem, TaskList } from '@/types';
 import { computed, ref } from 'vue'
 import NewProduct from './NewProduct.vue';
 
@@ -22,7 +22,7 @@ const newTaskItem = ref<TaskList>({
   completed: false,
   creationDate: new Date(),
   task: "",
-  done: false
+  frequency: "Once"
 });
 
 const buttonDisabled = computed(() => {
@@ -41,6 +41,22 @@ async function save() {
   }
 }
 
+const productList = ref([] as ShoppingListItem[]);
+
+async function addFromEmit(newShopItem: ShoppingListItem) {
+  const tmp: ShoppingListItem = {
+    productID: 1,
+    name: newShopItem.name,
+    brand: newShopItem.brand,
+    type: newShopItem.type,
+    qty: newShopItem.qty,
+    price: newShopItem.price,
+    bought: false
+  };
+  console.log(newShopItem);
+  productList.value.push(tmp);
+}
+
 </script>
 <template>
   <form v-on:submit.prevent>
@@ -53,14 +69,20 @@ async function save() {
       <input type="text" v-if="type ==='Task'" v-model="newTaskItem.task" placeholder="To - Do List Name" />
       <input type="text" v-else v-model="newShopingListItem.marketName" placeholder="Market Name" />
   </div>
-  <select>
+  <label>Frequency</label>
+  <select v-if="type === 'Task'">
       <option value="Once" selected>Once</option>
       <option value="Daily">Daily</option>
       <option value="Weekly">Weekly</option>
       <option value="Monthly">Monthly</option>
     </select>
-    <input type="date" :value="newTaskItem.creationDate.toISOString().split('T')[0]" />
+    <input v-if="type === 'ShoppingList'" type="date" :value="newShopingListItem.creationDate.toISOString().split('T')[0]" />
+    <input v-if="type === 'Task'" type="date" :value="newTaskItem.creationDate.toISOString().split('T')[0]" />
+    <div v-if="type === 'ShoppingList'">
+      <h1>Products</h1>
+      <h3 v-for="product in productList" :key="product.productID"> {{ product.name }} - {{ product.brand }} - {{ product.type }} - {{ product.qty }}</h3>
+      <NewProduct v-on:addNewProduct="addFromEmit"/>
+    </div>
     <input  type="submit" value="💾 Save"  v-on:click="save()" v-bind:disabled="buttonDisabled" />
-    <NewProduct v-if="type === 'ShoppingList'"/>
   </form>
 </template>
