@@ -33,6 +33,8 @@ function switchItemForm(value: boolean) {
   console.log(visibleNewItemForm.value);
 }
 
+console.log( localStorage.getItem("token"));
+
 </script>
 
 <template>
