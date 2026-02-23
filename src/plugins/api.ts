@@ -1,23 +1,24 @@
 import { useAuthStore } from '@/stores/auth'
 
 const baseUrl : string = import.meta.env.VITE_HOMELINK;
+const auth = useAuthStore();
+let response;
 
 async function getRequest(link: string){
-  const auth = useAuthStore();
   if (auth.isUserAuthenticated){
-    const data = await fetch(baseUrl + link, {
+    response = await fetch(baseUrl + link, {
       method: 'GET',
       headers: {
         Authorization: "Bearer " + auth.token
       }
     })
-    return await data.json();
+    if (import.meta.env.MODE === 'development')
+      console.log("Response Data from a GET Request: " + response);
+    return await response.json();
   }
 }
 
 async function postRequest(link: string, data: object){
-  const auth = useAuthStore();
-  let response;
   if (auth.isUserAuthenticated){
     response = await fetch(baseUrl + link, {
       method: 'POST',
@@ -36,6 +37,8 @@ async function postRequest(link: string, data: object){
       },
     })
   }
+    if (import.meta.env.MODE === 'development')
+      console.log("Response Data from a POST Request: " + response);
   if (!response.ok) {
       const errorText = await response.text()
       throw new Error(`Request failed: ${response.status} ${response.statusText} – ${errorText}`)
@@ -44,8 +47,7 @@ async function postRequest(link: string, data: object){
 }
 
 async function patchRequest(link: string, data: object){
-  const auth = useAuthStore();
-  const resposnse = await fetch(baseUrl + link, {
+  response = await fetch(baseUrl + link, {
     method: 'PATCH',
     body: JSON.stringify(data),
     headers: {
@@ -53,12 +55,12 @@ async function patchRequest(link: string, data: object){
       "Content-Type": "application/json"
     }
   })
-  console.log(resposnse.statusText);
+    if (import.meta.env.MODE === 'development')
+      console.log("Response Data from a PATCH Request: " + response);
 }
 
 async function deleteRequest(link: string){
-  const auth = useAuthStore();
-  await fetch(baseUrl + link, {
+  response = await fetch(baseUrl + link, {
     method: 'DELETE',
     headers: {
       Authorization: "Bearer " + auth.token,
