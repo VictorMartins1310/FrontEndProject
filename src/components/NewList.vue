@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import type { ShoppingList, ShoppingListItem, TaskList } from '@/types';
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import NewProduct from './NewProduct.vue';
-
-const type = ref('Task');
+import { API } from '@/plugins/api';
 
 const emit = defineEmits(['sendNewItem']);
+
+const type = ref('Task');
+const productList = ref([] as ShoppingListItem[]);
+const frequencyList = ref([] as string[]);
+
 
 const newShopingListItem = ref<ShoppingList>({
   todoID: 0,
@@ -41,8 +45,6 @@ async function save() {
   }
 }
 
-const productList = ref([] as ShoppingListItem[]);
-
 async function addFromEmit(newShopItem: ShoppingListItem) {
   const tmp: ShoppingListItem = {
     productID: 1,
@@ -57,6 +59,9 @@ async function addFromEmit(newShopItem: ShoppingListItem) {
   productList.value.push(tmp);
 }
 
+onMounted(async () => {
+  frequencyList.value = await API.getRequest("/frequencies");
+});
 </script>
 <template>
   <form v-on:submit.prevent>
@@ -70,17 +75,14 @@ async function addFromEmit(newShopItem: ShoppingListItem) {
       <input type="text" v-else v-model="newShopingListItem.marketName" placeholder="Market Name" />
   </div>
   <label>Frequency</label>
-  <select v-if="type === 'Task'">
-      <option value="Once" selected>Once</option>
-      <option value="Daily">Daily</option>
-      <option value="Weekly">Weekly</option>
-      <option value="Monthly">Monthly</option>
+  <select v-if="type === 'Task'"  v-model="newTaskItem.frequency">
+      <option v-for="element in frequencyList" :value="element" :key="element">{{ element }}</option>
     </select>
     <input v-if="type === 'ShoppingList'" type="date" :value="newShopingListItem.creationDate.toISOString().split('T')[0]" />
     <input v-if="type === 'Task'" type="date" :value="newTaskItem.creationDate.toISOString().split('T')[0]" />
     <div v-if="type === 'ShoppingList'">
       <h1>Products</h1>
-      <h3 v-for="product in productList" :key="product.productID"> {{ product.name }} - {{ product.brand }} - {{ product.type }} - {{ product.qty }}</h3>
+      <h3 v-for="product in productList" :key="product.productID"> {{ product.qty }} x {{ product.name }} - {{ product.brand }} -{{ product.price }}€ - {{ product.type }}</h3>
       <NewProduct v-on:addNewProduct="addFromEmit"/>
     </div>
     <input  type="submit" value="💾 Save"  v-on:click="save()" v-bind:disabled="buttonDisabled" />
