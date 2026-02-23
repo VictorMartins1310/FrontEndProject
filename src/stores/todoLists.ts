@@ -1,67 +1,61 @@
 import { API } from '@/plugins/api';
 import { defineStore } from "pinia";
 import { reactive } from 'vue';
-import type { ShoppingList, ShoppingListItem, TaskList} from '@/types';
+import type { ShoppingList, ShoppingListItem, TaskList, TodoListItem} from '@/types';
 
 export const useTodoStore = defineStore('todoLists', () => {
   const todoListsLink : string = "/todolist";
   const taskListsLink : string = todoListsLink + "/tasklist";
   const shoppingListsLink : string = todoListsLink + "/shoppinglist";
 
-  type TodoListItem =  ShoppingList | TaskList;
   const todoList = reactive<TodoListItem[]>([]);
   const shoppingList = reactive<ShoppingList>({} as ShoppingList);
   const taskList = reactive<TaskList>({} as TaskList);
   const shoppingItem = reactive<ShoppingListItem>({} as ShoppingListItem);
 
   async function getProductTypes(){
-    const data = await API.getRequest("/types");
-    return data;;
-}
+    return await API.getRequest("/types");
+  }
 
-    /**
+  /**
      * Generic function to load items from a specific Todo List
      * @param type
      * @param idTodoList
      */
-    async function loadItems() {
-      const data = await API.getRequest(todoListsLink);
-      todoList.splice(0, todoList.length); // Clear the array
-      data.forEach((item: TodoListItem) => {  todoList.push(item);  });
-      return data;
-    }
+  async function loadItems() {
+    return await API.getRequest(todoListsLink);
+  }
 
-    async function getTaskList(idTodoList: number){
-      return  await API.getRequest(taskListsLink + "/" + idTodoList);
-    }
+  async function getTaskList(idTodoList: number){
+    return  await API.getRequest(taskListsLink + "/" + idTodoList);
+  }
 
-    async function getShoppingList(idTodoList: number){
-      return  await API.getRequest(shoppingListsLink + "/" +  idTodoList);
-    }
+  async function getShoppingList(idTodoList: number){
+    return  await API.getRequest(shoppingListsLink + "/" +  idTodoList);
+  }
 
     /**
      * Add new Task to TaskList
      * @param idTodoList The Id from the Todo List
      * @author Victor Martins
      */
-    async function addTaskItem(newItem: TaskList){
-      const saveItem = {
-        task: newItem.task,
-      }
-     const returnItem = await API.postRequest(taskListsLink, saveItem);
-      todoList.push(newItem);
-      newItem = {} as TaskList;
-      return returnItem;
+  async function addTaskItem(newItem: TaskList){
+     const saveItem = {
+      task: newItem.task,
     }
+    console.log(saveItem);
+    const returnItem = await API.postRequest(taskListsLink, saveItem);
+    return returnItem;
+  }
 
     /**
      * Todo
      * @param newShoppingItem
      * @returns
      */
-    async function newShoppingList(market: string){
+    async function newShoppingList(newItem: ShoppingList){
       const newShoppingList = {
-          marketName: market
+          marketName: newItem.marketName,
         }
         return await API.postRequest(shoppingListsLink, newShoppingList);
     }
