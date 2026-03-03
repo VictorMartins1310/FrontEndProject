@@ -17,7 +17,7 @@ const nProdutcs = computed(() => {
 async function addFromEmit(newShopItem: ShoppingListItem) {
   console.log(newShopItem);
   let toSave: ShoppingListItem = {} as ShoppingListItem;
-  toSave ={
+  toSave = {
     productID: 0,
     name: newShopItem.name,
     brand: newShopItem.brand,

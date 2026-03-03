@@ -3,7 +3,7 @@ import { useTodoStore } from '@/stores/todoLists'
 import ShoppingListItem from '@/components/ShoppingListItem.vue';
 import TaskItem from '@/components/TaskItem.vue';
 import { computed, onMounted, reactive, ref } from 'vue';
-import type { ShoppingList, TaskList } from '@/types';
+import type { ShoppingList, TaskList, TodoListItem } from '@/types';
 import NewList from '@/components/NewList.vue';
 
 const todoStore = useTodoStore();
@@ -13,7 +13,6 @@ const props = defineProps<{
   showNewItemForm: boolean
 }>();
 
-type TodoListItem =  ShoppingList | TaskList;
 const completedTasks = reactive([] as TodoListItem[]);
 const todoList = reactive([] as TodoListItem[]);
 
@@ -27,8 +26,8 @@ onMounted(async() => {
     if (!element.completed) todoList.push(element);
     else completedTasks.push(element);
     })
-    if (todoStore.todoList.length > 0)
-      emit('newNotification', "Quantity of tasks", "You have " + todoStore.todoList.length + " Tasks to do!");
+    if (todoList.length > 0)
+      emit('newNotification', "Quantity of tasks", "You have " + todoList.length + " Tasks to do!");
 })
 
 async function loadItems() {
@@ -50,23 +49,23 @@ async function markUndone(index: number, task: TodoListItem) {
 const viewTasksDone = ref(false);
 
 const nTodoItems = computed(() => {
-  return todoStore.todoList.length;
+  return todoList.length;
 })
+
+async function addTask(task: TaskList){
+  return await todoStore.addTaskItem(task);
+}
 
 async function getData(data: TodoListItem) {
   if (data.type === "Task") {
-    const newT: TaskList = await todoStore.addTaskItem(data);
+    const newT: TaskList = await addTask(data);
     todoList.push(newT);
-    console.log(newT);
-  } else if (data.type === "ShoppingList") {
-     const newS = await todoStore.newShoppingList(data.marketName);
-     console.log(newS);
-      todoList.push(newS);
+  }else if (data.type === "ShoppingList") {
+    const newS: ShoppingList = await todoStore.newShoppingList(data as ShoppingList);
+    todoList.push(newS);
   }
-  console.log(data);
   emit('showNewItemForm', false);
 }
-
 </script>
 
 <template>
@@ -75,9 +74,9 @@ async function getData(data: TodoListItem) {
       <tr>
         <th style="text-align: left; padding: 20px;">
           <h1>TodoLists</h1>
-          </th>
-          <th><button v-on:click="loadItems()">Load TodoLists</button></th>
-          <th></th>
+        </th>
+        <th><button v-on:click="loadItems()">Load TodoLists</button></th>
+        <th></th>
       </tr>
       <tr>
         <th colspan="3">
@@ -86,19 +85,7 @@ async function getData(data: TodoListItem) {
         </th>
       </tr>
     </thead>
-    <tbody v-if ="todoList.length === 0" class="rounded">
-      <tr>
-        <td colspan="3" style="text-align: center;"><h1>No TodoLists yet!</h1></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td>
-        <NewList  v-on:send-new-item="getData"/>
-        </td>
-        <td></td>
-      </tr>
-    </tbody>
-    <tbody v-if="props.showNewItemForm" class="rounded">
+    <tbody v-if="props.showNewItemForm || todoList.length === 0" class="rounded">
       <tr>
         <td><h1>0</h1></td>
         <td class="todoItemCell"><NewList v-on:send-new-item="getData"/></td>
@@ -106,40 +93,49 @@ async function getData(data: TodoListItem) {
       </tr>
       </tbody>
       <tbody v-if="!props.showNewItemForm" class="rounded">
-      <tr v-for="(element, index) in todoList" v-bind:key="element.todoID" >
-        <td style="text-align: center; width: min-content;"><h1>{{ index + 1 }}</h1></td>
-        <td class="todoItemCell">
-          <ShoppingListItem v-if="element.type === 'ShoppingList'" :elem="element"/>
-          <TaskItem v-if="element.type === 'Task'" :elem="element"/>
-        </td>
-        <td v-if="element.type === 'ShoppingList' || element.type === 'Task'">
-          <div style="padding: 15px; display:grid; gap: 5px;">
-          <button v-if="element.type === 'Task'" v-on:click="markDone(index, element)">✔ Done</button>
-          <button onclick="alert('Nicht Verfügbar')">📝 Edit</button>
-          <button v-if="element.type === 'ShoppingList'" v-on:click="todoStore.deleteTodoList(element.todoID, element.type)">❌ Delete</button>
-        </div>
+        <tr v-for="(element, index) in todoList" v-bind:key="element.todoID" >
+          <td style="text-align: center; width: min-content;"><h1>{{ index + 1 }}</h1></td>
+          <td class="todoItemCell" v-if="element.type === 'ShoppingList'">
+            <ShoppingListItem :todoID="element.todoID"/>
+          </td>
+          <td class="todoItemCell" v-if="element.type === 'Task'">
+            <TaskItem :todoID="element.todoID"/>
+          </td>
+          <td v-if="element.type === 'ShoppingList' || element.type === 'Task'">
+            <div style="padding: 15px; display:grid; gap: 5px;">
+              <button v-if="element.type === 'Task'" v-on:click="markDone(index, element)">✔ Done</button>
+              <button onclick="alert('Nicht Verfügbar')">📝 Edit</button>
+              <button v-if="element.type === 'ShoppingList'" v-on:click="todoStore.deleteShoppingList(element.todoID)">❌ Delete</button>
+            </div>
         </td>
       </tr>
     </tbody>
-    <tbody>
+    <tbody v-if="nTodoItems > 0">
       <tr>
         <td></td>
         <td>Quantity: {{ nTodoItems }}</td>
         <td><button v-on:click="viewTasksDone = !viewTasksDone">View Tasks already done</button></td>
       </tr>
-      </tbody>
-      <thead><tr><th><h1>Completed Tasks</h1></th></tr></thead>
+    </tbody>
+    <tbody v-else>
+      <tr>
+        <td></td>
+        <td></td>
+        <td><button v-on:click="viewTasksDone = !viewTasksDone">View Tasks already done</button></td>
+      </tr>
+    </tbody>
+    <thead><tr><th><h1>Completed Tasks</h1></th></tr></thead>
     <tbody v-show="viewTasksDone" class="rounded">
-      <tr v-for="(element, index) in completedTasks" v-bind:key="element.todoID" >
+      <tr v-for="(todoItem, index) in completedTasks" v-bind:key="todoItem.todoID" >
         <td style="text-align: center; width: min-content;"><h1>{{ index + 1 }}</h1></td>
         <td class="todoItemCell">
-          <ShoppingListItem v-if="element.type === 'ShoppingList'" :elem="element"/>
-          <TaskItem v-if="element.type === 'Task'" :elem="element"/>
+          <ShoppingListItem v-if="todoItem.type === 'ShoppingList'" v-bind:todoID="todoItem.todoID"/>
+          <TaskItem v-if="todoItem.type === 'Task'" v-bind:todoID="todoItem.todoID"/>
         </td>
-        <td v-if="element.type === 'ShoppingList' || element.type === 'Task'">
+        <td v-if="todoItem.type === 'ShoppingList' || todoItem.type === 'Task'">
           <div style="padding: 15px; display:grid; gap: 5px;">
-          <button v-if="element.type === 'Task'" v-on:click="markUndone(index, element)">↩ Undo</button>
-          <button v-on:click="todoStore.deleteTodoList(element.todoID, element.type)">❌ Delete</button>
+            <button v-if="todoItem.type === 'Task'" v-on:click="markUndone(index, todoItem)">↩ Undo</button>
+            <button v-on:click="todoStore.deleteTodoList(todoItem.todoID, todoItem.type)">❌ Delete</button>
         </div>
         </td>
       </tr>

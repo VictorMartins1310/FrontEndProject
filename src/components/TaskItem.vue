@@ -9,8 +9,8 @@ const task = ref<TaskList>({} as TaskList);
 let creationDate: Date = new Date();
 
 onMounted(async () => {
+  console.log("TaskList, ID: " + props.todoID);
       task.value = await todo.getTaskList(props.todoID);
-      console.log(task.value);
       creationDate = new Date(task.value.creationDate);
   });
 

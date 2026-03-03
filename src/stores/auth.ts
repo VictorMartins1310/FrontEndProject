@@ -36,23 +36,76 @@ export const useAuthStore = defineStore('auth', () => {
     return false;
   });
 
+
   const isUserAuthenticated = computed(() => {
+  if (import.meta.env.MODE === 'development')
+    console.log("Computed\nToken:", token.value, "Is Token Expired?", isTokenExpired.value );
     return (token.value && !isTokenExpired.value);
   })
 
-  async function login(email: string, password: string) {
+  const loginData: { email: string; password: string } = { email: '', password: '' };
+
+
+  async function loginOnSupaBse(email: string, password: string) {
+    loginData.email = email;
+    loginData.password = password;
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": import.meta.env.VITE_SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
+    });
+
+      const jsonResponse = await response.json();
+
+    if (!response.ok) {
+      throw new Error(jsonResponse.error_description || jsonResponse.error || "Login fehlgeschlagen");
+    }
+    return jsonResponse;
+  }
+
+  /**
+   * @param email
+   * @param password
+   * @returns
+   */
+  async function loginOld(email: string, password: string) {
+    loginData.email = email;
+    loginData.password = password;
+    let response;
       try {
-        const loginData = {
-          email: email,
-          password: password,
-        }
-        const response = await API.postRequest('/login', loginData)
-        setToken(response.access_token);
-        return isUserAuthenticated.value;
-      } catch (error) {
+        response = await API.postRequest('/login', loginData)
+        console.log("Login Response:", response);
+
+      } catch (error){
         console.error('Login fehlgeschlagen:', error)
-        return false
+        return false;
       }
+      return await response;
+  }
+
+  async function login(email: string, password: string){
+    let bearerToken = "";
+    const atemptLocal = await loginOld(email, password);
+    console.log("Atempt Local:", atemptLocal);
+    //console.log("Atempt Local:", atemptLocal.json());
+    if (atemptLocal != false)
+      bearerToken = atemptLocal.access_token;
+   else {
+        const atemptSupabase = await loginOnSupaBse(email, password);
+        bearerToken = atemptSupabase.access_token;
+        console.log("Atempt Supabase:", atemptSupabase);
+    }
+
+    console.log("Bearer Token:", bearerToken);
+    setToken(bearerToken);
+
+    return isUserAuthenticated.value;
   }
 
   function logOut(){

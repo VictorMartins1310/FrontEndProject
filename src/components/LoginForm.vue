@@ -12,6 +12,12 @@ const inputType = computed(() => {
   return "password";
 })
 
+if (import.meta.env.DEV) {
+  email.value = "Victor.Martins.1310@hotmail.com";
+  password.value = "badPassword";
+}
+
+
 </script>
 
 <template>

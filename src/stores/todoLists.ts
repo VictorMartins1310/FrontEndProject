@@ -70,6 +70,7 @@ export const useTodoStore = defineStore('todoLists', () => {
       return newItem;
     }
 
+    // TODO: DELETE This function
     async function deleteTodoList(id: number, type: string){
       let index: number = 0;
       let finalLink: string = shoppingListsLink;
@@ -88,12 +89,17 @@ export const useTodoStore = defineStore('todoLists', () => {
       }else alert("You cannot delete the last List");
     }
 
+    async function deleteShoppingList(id: number,){
+      const result = await API.deleteRequest(shoppingListsLink + "/" + id);
+      console.log(result);
+    }
+
     async function setTaskDone(idTask: number){
      return  await API.patchRequest(taskListsLink  + idTask + "/done", {});
     }
 
     return {
         todoList, shoppingList, taskList, shoppingItem,
-        loadItems, newShoppingList, deleteTodoList, getTaskList, getShoppingList, setTaskDone, addTaskItem, getProductTypes, addShopItem
+        loadItems, newShoppingList, deleteShoppingList,deleteTodoList, getTaskList, getShoppingList, setTaskDone, addTaskItem, getProductTypes, addShopItem
       }
 });

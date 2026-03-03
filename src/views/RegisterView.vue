@@ -1,22 +1,49 @@
 <script setup lang="ts">
 
-import { API } from '@/plugins/api';
 import { ref } from 'vue'
 import { useRouter }  from 'vue-router';
 
 const router = useRouter();
-
-async function register(){
-  const response = await API.postRequest("/users/register", formData.value);
-  registered.value = true;
-  setTimeout(() => { router.push('/') }, 3000);
-  return response;
-}
-
-  const formData = ref({
+const formData = ref({
   email: "",
   password: "badPassword"
-  } );
+} );
+
+
+async function registerOld(){
+  const BodyData = {
+    method: 'POST',
+    body: JSON.stringify(formData.value),
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  }
+
+  const response = await fetch( import.meta.env.VITE_HOMELINK +"/users/register", BodyData);
+  return await response.json();
+}
+
+async function registerOnSupabe(){
+  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/signup`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": import.meta.env.VITE_SUPABASE_ANON_KEY
+    },
+    body: JSON.stringify(formData.value)
+  });
+  return await response.json();
+}
+
+async function register(){
+  let data;
+  // data = await registerOnSupabe();
+  // console.log(data);
+  data = await registerOld();
+  console.log(data);
+  registered.value = true;
+ setTimeout(() => { router.push('/') }, 3000);
+}
 
 async function generatePW() {
   const proxy: string = 'https://corsproxy.io/';
