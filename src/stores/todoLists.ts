@@ -40,11 +40,7 @@ export const useTodoStore = defineStore('todoLists', () => {
      * @author Victor Martins
      */
   async function addTaskItem(newItem: TaskList){
-     const saveItem = {
-      task: newItem.task,
-    }
-    console.log(saveItem);
-    const returnItem = await API.postRequest(taskListsLink, saveItem);
+    const returnItem = await API.postRequest(taskListsLink, newItem);
     return returnItem;
   }
 
