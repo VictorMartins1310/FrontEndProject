@@ -58,7 +58,7 @@ async function addTask(task: TaskList){
 
 async function getData(data: TodoListItem) {
   if (data.type === "Task") {
-    const newT: TaskList = await addTask(data);
+    const newT: TaskList = await addTask(data as TaskList);
     todoList.push(newT);
   }else if (data.type === "ShoppingList") {
     const newS: ShoppingList = await todoStore.newShoppingList(data as ShoppingList);
