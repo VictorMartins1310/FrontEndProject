@@ -13,7 +13,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: '../BackEndProject/src/main/resources/static',
+    outDir: 'dist',
     assetsDir: 'static',
   },
   server: {
