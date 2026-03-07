@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ShoppingList, ShoppingListItem } from '@/types';
+import { ProductType, type ShoppingList, type ShoppingListItem } from '@/types';
 import { useTodoStore } from '@/stores/todoLists';
 import { computed, onMounted, ref } from 'vue';
 import NewProductItem from './NewProduct.vue';
@@ -32,7 +32,7 @@ async function addFromEmit(newShopItem: ShoppingListItem) {
   newShopItem.brand = "";
   newShopItem.price = 0.01;
   newShopItem.qty = 1;
-  newShopItem.type = "Other";
+  newShopItem.type = ProductType.Other;
   newShopItem.bought = false;
 
 }

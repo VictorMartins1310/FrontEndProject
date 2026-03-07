@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import type { ShoppingList, ShoppingListItem, TaskList } from '@/types';
-import { computed, onMounted, ref } from 'vue'
+import { Frequency, type ShoppingList, type ShoppingListItem, type TaskList } from '@/types';
+import { computed, ref } from 'vue'
 import NewProduct from './NewProduct.vue';
-import { API } from '@/plugins/api';
 
 const emit = defineEmits(['sendNewItem']);
 
 const type = ref('Task');
 const productList = ref([] as ShoppingListItem[]);
-const frequencyList = ref([] as string[]);
 
 
 const newShopingListItem = ref<ShoppingList>({
@@ -26,7 +24,7 @@ const newTaskItem = ref<TaskList>({
   completed: false,
   creationDate: new Date(),
   task: "",
-  frequency: "Once"
+  frequency: Frequency.Once
 });
 
 const buttonDisabled = computed(() => {
@@ -59,9 +57,6 @@ async function addFromEmit(newShopItem: ShoppingListItem) {
   productList.value.push(tmp);
 }
 
-onMounted(async () => {
-  frequencyList.value = await API.getRequest("/frequencies");
-});
 </script>
 <template>
   <form v-on:submit.prevent>
@@ -76,7 +71,7 @@ onMounted(async () => {
   </div>
   <label>Frequency</label>
   <select v-if="type === 'Task'"  v-model="newTaskItem.frequency">
-      <option v-for="element in frequencyList" :value="element" :key="element">{{ element }}</option>
+      <option v-for="freq in Frequency" :value="freq" :key="freq">{{ freq }}</option>
     </select>
     <input v-if="type === 'ShoppingList'" type="date" :value="newShopingListItem.creationDate.toISOString().split('T')[0]" />
     <input v-if="type === 'Task'" type="date" :value="newTaskItem.creationDate.toISOString().split('T')[0]" />

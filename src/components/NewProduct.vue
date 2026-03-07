@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { useTodoStore } from '@/stores/todoLists';
-import type { ShoppingListItem } from '@/types';
-import { computed, onMounted, ref, reactive } from 'vue';
+import { ProductType, type ShoppingListItem } from '@/types';
+import { computed, onMounted, reactive } from 'vue';
 
-const productTypeList = ref<string[]>([]);
-const todoStore = useTodoStore();
 
 defineEmits(['addNewProduct']);
 
@@ -20,8 +17,7 @@ const isFormInValid = computed(() => {
 onMounted(async () => {
   newShopItem.qty = 1;
   newShopItem.price = 0.01;
-  productTypeList.value = await todoStore.getProductTypes();
-  newShopItem.type = productTypeList.value[0];
+  newShopItem.type = ProductType.Other;
 })
 
 </script>
@@ -33,7 +29,7 @@ onMounted(async () => {
       <td style="text-align: right; width: auto; max-width: 15ch;"><input name="price" class="fitNumbers"  style="text-align: right; max-width: 10ch;" v-model="newShopItem.price" type="number" min="0.01" step="0.01" value="0.01" placeholder="0.01" /> €</td>
         <td>
           <select name="type" v-model="newShopItem.type" style="width: fit-content; min-width: 30px; max-width: max-content;">
-          <option  v-for="value in productTypeList" v-bind:value="value" v-bind:key="value">{{ value }}</option>
+          <option  v-for="product in ProductType" v-bind:value="product" v-bind:key="product">{{ product }}</option>
         </select>
     </td>
     <td>
