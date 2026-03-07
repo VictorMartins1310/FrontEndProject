@@ -1,3 +1,17 @@
+export enum Frequency {
+    Once = "Once",
+    Daily = "Daily",
+    Weekly = "Weekly",
+    Monthly = "Monthly"
+}
+
+export enum ProductType {
+    Other = "Other",        Drink = "Drink",
+    Hygienic = "Hygienic",  Alcohol = "Alcohol",
+    Fish = "Fish",          Ham = "Ham",
+    Fruit = "Fruit",        Vegetables = "Vegetables"
+};
+
 export  interface  TodoItem {
   todoID: number,
   creationDate: Date,
@@ -10,7 +24,7 @@ export interface ShoppingListItem {
   brand: string,
   price: number,
   qty: number,
-  type: string,
+  type: ProductType,
   bought: boolean
 };
 
@@ -23,7 +37,7 @@ export interface ShoppingList extends TodoItem {
 export interface TaskList extends TodoItem{
   type: "Task",
   task: string,
-  frequency: string
+  frequency: Frequency
 };
 
   export type TodoListItem =  ShoppingList | TaskList;
