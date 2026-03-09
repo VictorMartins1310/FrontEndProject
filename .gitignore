@@ -31,3 +31,5 @@ coverage
 
 *.tsbuildinfo
 android
+
+package-lock.json
