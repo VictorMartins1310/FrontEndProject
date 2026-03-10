@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Frequency, type ShoppingList, type ShoppingListItem, type TaskList } from '@/types';
 import { computed, ref } from 'vue'
-import NewProduct from './NewProduct.vue';
+import NewProduct from './ProductItem.vue';
 
 const emit = defineEmits(['sendNewItem']);
 
