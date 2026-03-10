@@ -7,17 +7,19 @@ const todo = useTodoStore();
 const task = ref<TaskList>({} as TaskList);
 
 let creationDate: Date = new Date();
+let loaded = ref(false);
 
 onMounted(async () => {
   console.log("TaskList, ID: " + props.todoID);
-      task.value = await todo.getTaskList(props.todoID);
+      task.value = await todo.getTaskList(props.todoID).finally(() => loaded.value = true );
       creationDate = new Date(task.value.creationDate);
   });
 
 
 </script>
 <template>
-  <table style="width: 100%;">
+  <h1 v-if="!loaded">Loading...</h1>
+  <table v-else style="width: 100%;">
      <thead>
       <tr>
         <th>Creation Date</th>

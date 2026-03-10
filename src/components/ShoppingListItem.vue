@@ -2,12 +2,13 @@
 import { ProductType, type ShoppingList, type ShoppingListItem } from '@/types';
 import { useTodoStore } from '@/stores/todoLists';
 import { computed, onMounted, ref } from 'vue';
-import NewProductItem from './NewProduct.vue';
+import NewProductItem from './ProductItem.vue';
 
 const props = defineProps<{todoID: number}>();
 const todoStore = useTodoStore();
 const shoppingList = ref<ShoppingList>({} as ShoppingList);
 const productList = ref<ShoppingListItem []>([] as ShoppingListItem[]);
+const loaded = ref(false);
 let creationDate: Date = new Date();
 
 const nProdutcs = computed(() => {
@@ -38,7 +39,7 @@ async function addFromEmit(newShopItem: ShoppingListItem) {
 }
 
 onMounted(async () => {
-  shoppingList.value = await todoStore.getShoppingList(props.todoID);
+  shoppingList.value = await todoStore.getShoppingList(props.todoID).finally(() => loaded.value = true);
   creationDate = new Date(shoppingList.value.creationDate);
       shoppingList.value.products.forEach(eleme => {
       productList.value.push(eleme);
@@ -70,8 +71,9 @@ const addNewProduct = ref(false);;
     {{ shoppingList.marketName }}
     {{ creationDate.toDateString() }}
   <input v-if="nProdutcs > 0" type="button" v-on:click="showProductList()" v-bind:value="isProductListVisible.text"  />
-</h2>
- <table style="width: 100%;">
+  </h2>
+  <h1 v-if="!loaded">Loading...</h1>
+  <table v-else style="width: 100%;">
     <thead>
       <tr v-show="isProductListVisible.visible">
         <th>Qty</th>
