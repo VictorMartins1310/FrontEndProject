@@ -9,9 +9,6 @@ export const useTodoStore = defineStore('todoLists', () => {
   const shoppingListsLink : string = todoListsLink + "/shoppinglist";
 
   const todoList = reactive<TodoListItem[]>([]);
-  const shoppingList = reactive<ShoppingList>({} as ShoppingList);
-  const taskList = reactive<TaskList>({} as TaskList);
-  const shoppingItem = reactive<ShoppingListItem>({} as ShoppingListItem);
 
   async function getProductTypes(){
     return await API.getRequest("/types");
@@ -23,15 +20,20 @@ export const useTodoStore = defineStore('todoLists', () => {
      * @param idTodoList
      */
   async function loadItems() {
-    return await API.getRequest(todoListsLink);
+    //return await API.getRequest(todoListsLink);
+    const { response, data } = await API.getRequest(todoListsLink + "?completed=1");
+    return { data };
   }
 
   async function getTaskList(idTodoList: number){
-    return  await API.getRequest(taskListsLink + "/" + idTodoList);
+    const { response, data } = await API.getRequest(taskListsLink + "/" + idTodoList);
+    console.log(response.status + " - " + response.statusText);
+    return data;
   }
 
   async function getShoppingList(idTodoList: number){
-    return  await API.getRequest(shoppingListsLink + "/" +  idTodoList);
+    const { response, data } = await API.getRequest(shoppingListsLink + "/" +  idTodoList);
+    return data;
   }
 
     /**
@@ -40,8 +42,8 @@ export const useTodoStore = defineStore('todoLists', () => {
      * @author Victor Martins
      */
   async function addTaskItem(newItem: TaskList){
-    const returnItem = await API.postRequest(taskListsLink, newItem);
-    return returnItem;
+    const { response, data } = await API.postRequest(taskListsLink, newItem);
+    return data;
   }
 
     /**
@@ -91,11 +93,11 @@ export const useTodoStore = defineStore('todoLists', () => {
     }
 
     async function setTaskDone(idTask: number){
-     return  await API.patchRequest(taskListsLink  + idTask + "/done", {});
+     return  await API.patchRequest(taskListsLink  + "/" + idTask + "/done", {});
     }
 
     return {
-        todoList, shoppingList, taskList, shoppingItem,
+        todoList,
         loadItems, newShoppingList, deleteShoppingList,deleteTodoList, getTaskList, getShoppingList, setTaskDone, addTaskItem, getProductTypes, addShopItem
       }
 });
