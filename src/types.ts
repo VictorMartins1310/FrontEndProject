@@ -15,6 +15,7 @@ export enum ProductType {
 export  interface  TodoItem {
   todoID: number,
   creationDate: Date,
+  doOnDay: Date,
   completed: boolean,
 };
 
