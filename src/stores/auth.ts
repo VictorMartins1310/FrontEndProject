@@ -61,7 +61,7 @@ export const useAuthStore = defineStore('auth', () => {
       })
     });
 
-      const jsonResponse = await response.json();
+    const jsonResponse = await response.json();
 
     if (!response.ok) {
       throw new Error(jsonResponse.error_description || jsonResponse.error || "Login fehlgeschlagen");
@@ -89,19 +89,24 @@ export const useAuthStore = defineStore('auth', () => {
       return await response;
   }
 
+  /**
+   * Attempt to login in at DB (SupaBase)
+   * @param email 
+   * @param password 
+   * @returns isUserAuthenticated = true or false
+   */
   async function login(email: string, password: string){
     let bearerToken = "";
-    const atemptLocal = await loginOld(email, password);
-    console.log("Atempt Local:", atemptLocal);
-    //console.log("Atempt Local:", atemptLocal.json());
-    if (atemptLocal != false)
-      bearerToken = atemptLocal.access_token;
-   else {
-        const atemptSupabase = await loginOnSupaBse(email, password);
-        bearerToken = atemptSupabase.access_token;
-        console.log("Atempt Supabase:", atemptSupabase);
+    let atemptLocal; // = await loginOld(email, password);
+    atemptLocal = false;  // Moved to authentication Supabase only
+    if (atemptLocal === false){
+      const atemptSupabase = await loginOnSupaBse(email, password);
+      bearerToken = atemptSupabase.access_token;
     }
-
+/*    else {
+      bearerToken = atemptLocal.access_token;
+    }
+*/
     console.log("Bearer Token:", bearerToken);
     setToken(bearerToken);
 
