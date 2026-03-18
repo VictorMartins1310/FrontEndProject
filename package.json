@@ -18,7 +18,8 @@
     "format": "prettier --write src/",
     "predev": "npm version patch --no-git-tag-version",
     "prebuild": "npm version minor --no-git-tag-version",
-    "build": "vite build"
+    "build": "vite build",
+    "build2backend": "vite build --outDir ../BackEndProject/src/main/resources/static"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
