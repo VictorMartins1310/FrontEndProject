@@ -70,26 +70,6 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
-   * @param email
-   * @param password
-   * @returns
-   */
-  async function loginOld(email: string, password: string) {
-    loginData.email = email;
-    loginData.password = password;
-    let response;
-      try {
-        response = await API.postRequest('/login', loginData)
-        console.log("Login Response:", response);
-
-      } catch (error){
-        console.error('Login fehlgeschlagen:', error)
-        return false;
-      }
-      return await response;
-  }
-
-  /**
    * Attempt to login in at DB (SupaBase)
    * @param email 
    * @param password 
@@ -97,17 +77,8 @@ export const useAuthStore = defineStore('auth', () => {
    */
   async function login(email: string, password: string){
     let bearerToken = "";
-    let atemptLocal; // = await loginOld(email, password);
-    atemptLocal = false;  // Moved to authentication Supabase only
-    if (atemptLocal === false){
-      const atemptSupabase = await loginOnSupaBse(email, password);
-      bearerToken = atemptSupabase.access_token;
-    }
-/*    else {
-      bearerToken = atemptLocal.access_token;
-    }
-*/
-    console.log("Bearer Token:", bearerToken);
+    const atemptSupabase = await loginOnSupaBse(email, password);
+    bearerToken = atemptSupabase.access_token;
     setToken(bearerToken);
 
     return isUserAuthenticated.value;
