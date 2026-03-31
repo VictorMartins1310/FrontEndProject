@@ -14,6 +14,7 @@ const newShopingListItem = ref<ShoppingList>({
   type: "ShoppingList",
   completed: false,
   creationDate: new Date(),
+  doOnDay: new Date(),
   marketName: "",
   products: []
 });
@@ -23,6 +24,7 @@ const newTaskItem = ref<TaskList>({
   type: "Task",
   completed: false,
   creationDate: new Date(),
+  doOnDay: new Date(),
   task: "",
   frequency: Frequency.Once
 });

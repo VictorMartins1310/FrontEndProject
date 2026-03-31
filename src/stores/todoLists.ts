@@ -27,7 +27,6 @@ export const useTodoStore = defineStore('todoLists', () => {
 
   async function getTaskList(idTodoList: number){
     const { response, data } = await API.getRequest(taskListsLink + "/" + idTodoList);
-    console.log(response.status + " - " + response.statusText);
     return data;
   }
 
