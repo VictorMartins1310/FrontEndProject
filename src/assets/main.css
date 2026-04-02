@@ -28,10 +28,49 @@ a,
   }
 
   #app {
-    /* display: grid; */
     display: flex;
-    /*grid-template-columns: 1fr 1fr;*/
-    /* padding: 0 2rem; */
+    /*grid-template-columns: 1fr 1fr;
+    padding: 0 2rem; */
     flex-direction: column;
+    /* background-color: blueviolet; */
+    min-width: 1024px;
+    transition: background-color 7s ease;
+    min-height: 100vh;
   }
+}
+
+button {
+  padding: 1.25em;
+  border-radius: 1.25em;
+  min-width: min-content;
+  min-height: min-content;
+  width: fit-content;
+  height: fit-content;
+}
+
+select {
+  padding: 0.5em;
+  text-align: center;
+}
+
+input {
+  padding: 0.5em;
+}
+
+input[type="text"] {
+  border: 0px none white;
+  border-bottom: 1px solid black; 
+}
+
+input[type="button"],
+input[type="submit"] {
+  padding: 1.25em;
+  border-radius: 1.25em;
+}
+
+form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-direction: column;
 }
