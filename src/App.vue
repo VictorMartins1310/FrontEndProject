@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RouterLink, RouterView, useRoute } from 'vue-router';
+import { RouterView, useRoute } from 'vue-router';
 import { useAuthStore } from './stores/auth';
 import LoginForm from './components/LoginForm.vue';
 import { computed, ref } from 'vue';
@@ -32,28 +32,14 @@ function switchItemForm(value: boolean) {
   visibleNewItemForm.value = value;
   console.log(visibleNewItemForm.value);
 }
-
-console.log( localStorage.getItem("token"));
-
 </script>
-
 <template>
-  <header>
-    <div class="wrapper">
-      <nav>
-        <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/register" v-show="!auth.isUserAuthenticated">Register</RouterLink>
-      </nav>
-    </div>
-  </header>
   <LoginForm v-if="!auth.isUserAuthenticated && showLoginOptions " />
-  <template v-else>
+  <main v-else>
     <SideBar v-on:show-new-Item-Form="switchItemForm" />
     <RouterView v-if="route.path==='/'" v-bind:showNewItemForm="visibleNewItemForm" v-on:show-new-item-form="switchItemForm" v-on:newNotification="sendNotification" />
     <RouterView v-else />
- </template>
+  </main>
 </template>
 
 <style scoped>
