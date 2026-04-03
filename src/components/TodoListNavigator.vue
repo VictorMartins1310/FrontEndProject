@@ -14,13 +14,17 @@ const viewTaskMode = [ "Today", "Week", "Month", "All" ],
 
     emit = defineEmits(['selectedViewTaskMode', 'selectedDay'])
 
+let selectedDayOutput: string;
+
 function setNextDay(){
   selectedDay.value = nextDay(selectedDay.value);
+  selectedDayOutput = formatDateToISOString(selectedDay.value);
   emit('selectedDay', selectedDay.value);
 }
 
 function setDayBefore(){
   selectedDay.value = dayBefore(selectedDay.value);
+  selectedDayOutput = formatDateToISOString(selectedDay.value);
   emit('selectedDay', selectedDay.value);
 }
 
@@ -48,11 +52,11 @@ function emitselectedViewTaskMode(){
   emit('selectedViewTaskMode', selected.value);
 };
 
-function formatCalendar():string {
+function formatDateToISOString(date2Format: Date): string {
   const 
-    year = selectedDay.value.getFullYear(),
-    month = String(selectedDay.value.getMonth() + 1).padStart(2, "0"),
-    day = String(selectedDay.value.getDate()).padStart(2, "0"),
+    year = date2Format.getFullYear(),
+    month = String(date2Format.getMonth() + 1).padStart(2, "0"),
+    day = String(date2Format.getDate()).padStart(2, "0"),
     promptDay: string = year + "-" + month + "-" + day;
   return promptDay;
 };
@@ -68,13 +72,13 @@ function changedSelectedDay(event: Event){
 
   <div v-if="selected === viewTaskMode[0]" class="nav">
     <button v-on:click="setDayBefore()">⬅️ Day Before</button>
-    <input type="date" v-bind:value="formatCalendar()" v-on:change="changedSelectedDay" />
+    <input type="date" v-bind:value="selectedDayOutput" v-on:change="changedSelectedDay" />
     <button v-on:click="setNextDay()">Next Day ➡️</button>
   </div>
 
   <div v-if="selected === viewTaskMode[1]" class="nav">
     <button v-on:click="setWeekBefore()">⬅️ Week Before</button>
-    <h1>{{ getFirstDayWeek(selectedDay).toDateString() }}<br /><-><br />{{ getLastDayWeek(selectedDay).toDateString() }}</h1>
+    <h1>{{ getFirstDayWeek(selectedDay).toDateString() }}<br />↔<br />{{ getLastDayWeek(selectedDay).toDateString() }}</h1>
     <button v-on:click="setNextWeek()">Next Week ➡️</button>
   </div>
 
