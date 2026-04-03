@@ -39,9 +39,9 @@ console.log( localStorage.getItem("token"));
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
     <div class="wrapper">
       <nav>
+        <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <RouterLink to="/register" v-show="!auth.isUserAuthenticated">Register</RouterLink>
@@ -68,12 +68,14 @@ header {
 }
 
 nav {
-  width: 100%;
+  min-width: 96vw;
   font-size: 12px;
   text-align: center;
   margin-top: 2rem;
   display: flex;
   flex-direction: row;
+  top: 2px;
+  left: 2px;
 }
 
 nav a.router-link-exact-active {
@@ -86,8 +88,9 @@ nav a.router-link-exact-active:hover {
 
 nav a {
   display: inline-block;
-  padding: 0 1rem;
   border-left: 1px solid var(--color-border);
+  height: fit-content;
+  padding: 10px;
 }
 
 nav a:first-of-type {
@@ -98,8 +101,6 @@ nav a:first-of-type {
   header {
     display: flex;
     place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-    max-width: 5%;
   }
 
   .logo {
@@ -114,11 +115,7 @@ nav a:first-of-type {
 
   nav {
     text-align: left;
-    margin-left: -1rem;
     font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
   }
 }
 </style>

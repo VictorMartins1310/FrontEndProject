@@ -1,63 +1,74 @@
 <script setup lang="ts">
 import { useTodoStore } from '@/stores/todoLists'
 import { computed, onMounted, reactive, ref } from 'vue';
-import type { ShoppingList, TaskList, TodoListItem } from '@/types';
+import { Frequency, type ShoppingList, type TaskList, type TodoListItem } from '@/types';
 import NewList from '@/components/NewList.vue';
 import TodoItem from '@/components/TodoItem.vue';
-import { dayBefore, isInWeek, nextDay, thisMonth, thisWeek } from '@/plugins/dates';
+import { isInWeek } from '@/plugins/dates';
+import TodosDaily from '@/components/TodosDaily.vue';
+import TodoListNavigator from '@/components/TodoListNavigator.vue';
 
-const todoStore = useTodoStore();
+const todoStore = useTodoStore(),
+  emit = defineEmits(['showNewItemForm', 'newNotification']),
+  props = defineProps<{
+    showNewItemForm: boolean
+  }>(),
 
-const emit = defineEmits(['showNewItemForm', 'newNotification']);
-const props = defineProps<{
-  showNewItemForm: boolean
-}>();
-
-const completedTasks = reactive([] as TodoListItem[]);
-const todoList = reactive([] as TodoListItem[]);
-
-
-const viewTaskMode = [ "Today", "Week","Month", "All" ];
-
-// const today = new Date();
-// const date1 = ref(new Date());
-// const date2 = ref(new Date(date1.value.setDate(today.getDate() + 7)));
+  completedTasks = reactive([] as TodoListItem[]),
+  todoList = reactive([] as TodoListItem[]),
+  viewTaskMode = [ "Today", "Week", "Month", "All" ],
+  selected = ref("Today"),
+  selectedDay = ref(new Date()),
+  nTodoItems = computed(() => {
+    return todoList.length;
+  }),
+  viewTasksDone = ref(false);
 
 
-let selectedDay = ref(new Date());
 
 onMounted(async() => {
-  await loadItems();
+  //await loadItems();  
 })
 
-async function loadItems() {
-  const data = await todoStore.loadItems();
-  const n = todoList.length;
-  if (n > 0){
-    todoList.splice(0, n);
-  }
-  data.forEach((element: TodoListItem) => {
-    const creationDate = new Date(element.creationDate);
-    switch(selected.value){
-      case viewTaskMode[0]: 
-              if(selectedDay.value.toDateString() === creationDate.toDateString()){
-                todoList.push(element);
-              }
-              break;
-        case viewTaskMode[1]:
-              if (isInWeek(selectedDay.value, creationDate))
-                todoList.push(element);
-              break;
-        case viewTaskMode[2]: 
-              alert("ERROR");
-                break;
-        default: 
-              todoList.push(element);
-    }
-  })
-  if (todoList.length > 0)
-    emit('newNotification', "Quantity of tasks", "You have " + todoList.length + " Tasks to do!");
-}
+
+
+// async function loadToday(data: TodoListItem[]){
+//   data.forEach((element: TodoListItem) => {
+//     if (selectedDay.value === element.doOnDay)
+//       todoList.push(element);
+//   });
+// }
+
+// async function loadItems() {
+//   const { data } = await todoStore.loadItems();
+//   if (nTodoItems.value > 0){
+//     todoList.splice(0, nTodoItems.value);
+//   }
+//   if (viewTaskMode[0] == selected.value)
+//     loadToday(data);
+//   else
+//     data.forEach((element: TodoListItem) => {
+//       todoList.push(element);
+//     });
+//   if (todoList.length > 0)
+//     emit('newNotification', "Quantity of tasks", "You have " + todoList.length + " Tasks to do!");
+// }
+
+// async function getTaskList(id: number){
+//   return await todoStore.getTaskList(id);
+// }
+
+// async function loadWeekItems(){
+//   const { data } = await todoStore.loadItems();
+//   const length = data.length;
+//   for (let i = 0; i<length; i++)
+//     if (data[i].type === "Task"){
+//       const taskItem: TaskList = await getTaskList(data[i].todoID);
+//       let doOnDay = new Date(data[i].doOnDay);
+//       if (taskItem.frequency === Frequency.Daily || taskItem.frequency === Frequency.Weekly || isInWeek(selectedDay.value, doOnDay) || doOnDay.toDateString() === selectedDay.value.toDateString())
+//         todoList.push(taskItem);
+//     }
+// }
 
 async function markDone(index: number, task: TodoListItem) {
   await todoStore.setTaskDone(task.todoID);
@@ -71,54 +82,45 @@ async function markUndone(index: number, task: TodoListItem) {
   completedTasks.splice(index, 1);
 }
 
-const viewTasksDone = ref(false);
-
-const nTodoItems = computed(() => {
-  return todoList.length;
-})
-
 async function addTask(task: TaskList){
   return await todoStore.addTaskItem(task);
 }
 
-async function getData(data: TodoListItem) {
-  if (data.type === "Task") {
-    const newT: TaskList = await addTask(data as TaskList);
+/**
+ * This function get data from emited new Item
+ * @param inputData 
+ */
+async function getData(inputData: TodoListItem) {
+  if (inputData.type === "Task") {
+    const newT: TaskList = await addTask(inputData as TaskList);
     todoList.push(newT);
-  }else if (data.type === "ShoppingList") {
-    const newS: ShoppingList = await todoStore.newShoppingList(data as ShoppingList);
+  }else if (inputData.type === "ShoppingList") {
+    const { data } = await todoStore.newShoppingList(inputData as ShoppingList);
+    const newS = data; 
     todoList.push(newS);
   }
   emit('showNewItemForm', false);
 }
 
 const isModeDev = () => {
-  if (import.meta.env.DEV)
-    return true;
-  return false;
+  return import.meta.env.DEV;
 }
 const mode = ref(false);
-const selected = ref("Today");
 
-  
+function getEmitedViewTaskMode(value: string){
+  selected.value = value;
+}
+
+function getEmitedDay(value: Date){
+  selectedDay.value = value;
+}
+
 </script>
 <template>
-  <select v-model="selected" v-on:change="loadItems">
-    <option v-for="item in viewTaskMode" :key="item" :value="item">{{ item }}</option>
-  </select>
-  <input type="checkbox" v-on:click="mode = ! mode" />
-  <h1 style="text-align: center;">
-    <button v-on:click="selectedDay = dayBefore(selectedDay); loadItems()"><- Day Before</button>
-    {{ selectedDay.toDateString() }}
-    <button v-on:click="selectedDay = nextDay(selectedDay); loadItems()">Next Day -></button>
-  </h1>
+  <TodoListNavigator v-on:selectedViewTaskMode="getEmitedViewTaskMode" v-on:selected-day="getEmitedDay" />
+  <input type="checkbox" v-on:click="mode = !mode" />
   <div v-if="mode">
     <NewList v-if="props.showNewItemForm || todoList.length === 0" class="rounded" v-on:send-new-item="getData" />
-    <ol>
-      <li v-for="(element) in todoList" v-bind:key="element.todoID">
-        <TodoItem v-bind:type="element.type" v-bind:id="element.todoID" />
-      </li>
-    </ol>
   </div>
   <table v-else>
     <thead>
@@ -126,25 +128,20 @@ const selected = ref("Today");
         <th style="text-align: left; padding: 20px;">
           <h1>TodoLists</h1>
         </th>
-        <th><button v-on:click="loadItems()">Load TodoLists</button></th>
+        <th><!-- <button v-on:click="loadItems()">Load TodoLists</button> --></th>
         <th></th>
       </tr>
-      <!-- <tr>
-        <th colspan="3">
-          <input type="date" v-model="date1.toISOString().split('T')[0]"/>
-          <input type="date" v-model="date2.toISOString().split('T')[0]"/>
-        </th>
-      </tr> -->
     </thead>
-    <tbody v-if="props.showNewItemForm || todoList.length === 0" class="rounded">
+    <tbody v-if="props.showNewItemForm || todoList.length === 0" class="rounded" style="min-height: 800px;">
       <tr>
         <td><h1>0</h1></td>
         <td class="todoItemCell"><NewList v-on:send-new-item="getData"/></td>
         <td></td>
       </tr>
-      </tbody>
-      <tbody v-if="!props.showNewItemForm" class="rounded">
-        <tr v-for="(element, index) in todoList" v-bind:key="element.todoID" >
+    </tbody>
+    <TodoItem v-bind:selected-day="selectedDay" />
+    <tbody v-if="!props.showNewItemForm" class="rounded">
+        <!-- <tr v-for="(element, index) in todoList" v-bind:key="element.todoID" >
           <td style="text-align: center; width: min-content;"><h1>{{ index + 1 }}</h1></td>
           <td class="todoItemCell">
             <TodoItem v-bind:type="element.type" v-bind:id="element.todoID" />
@@ -156,7 +153,7 @@ const selected = ref("Today");
               <button v-if="element.type === 'ShoppingList'" v-on:click="todoStore.deleteShoppingList(element.todoID)">❌ Delete</button>
             </div>
         </td>
-      </tr>
+      </tr> -->
     </tbody>
     <tbody v-if="nTodoItems > 0">
       <tr>
@@ -228,7 +225,15 @@ button.delete:hover {
   align-items: center;
 }
 
-button { background: #4a90e2; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
+button { 
+  background: #4a90e2;
+  color: white;
+  border: none;
+  /* padding: 0.5rem 1rem;
+  border-radius: 8px; */
+  cursor: pointer;
+  font-weight: 600;
+}
 button:hover { background: #3b7ac0; }
 
 
