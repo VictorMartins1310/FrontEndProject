@@ -22,25 +22,28 @@ if (import.meta.env.DEV) {
 
 <template>
   <div class="overlay">
-  <form v-show="!auth.isUserAuthenticated" class="login-box" v-on:submit.prevent="auth.login(email, password)">
-    <h2>Login</h2>
-    <input name="email" v-model="email" type="text" placeholder="Benutzername" required autocomplete="off" />
-    <div class="password-wrapper">
-      <input name="password" class="password-input" v-model="password" v-bind:type="inputType" placeholder="Passwort" required>
-      <input name="pwvisibility" class="toggle-checkbox" v-model="showPassword" type="checkbox" :title="showPassword ? 'Verbergen' : 'Anzeigen'" />
-    </div>
-    <RouterLink to="/register">Register Here</RouterLink>
-    <button type="submit">Einloggen</button>
-  </form></div>
+    <form v-show="!auth.isUserAuthenticated" class="login-box" v-on:submit.prevent="auth.login(email, password)">
+      <h2>Login</h2>
+      <input name="email" v-model="email" type="text" placeholder="Benutzername" required autocomplete="off" />
+      <div class="password-wrapper">
+        <input name="password" class="password-input" v-model="password" v-bind:type="inputType" placeholder="Passwort" required>
+        <input name="pwvisibility" class="toggle-checkbox" v-model="showPassword" type="checkbox" :title="showPassword ? 'Verbergen' : 'Anzeigen'" />
+      </div>
+      <button type="submit">Einloggen</button>
+      <RouterLink to="/about">About</RouterLink>
+      <RouterLink to="/register">Register Here</RouterLink>
+    </form>
+  </div>
 </template>
 
 <style scoped>
 .password-wrapper {
   position: relative;
-  width: 100%;
+  width: fit-content;
 }
 
 .password-input {
+  min-width: 32ch;
   width: 100%;
   padding-right: 40px; /* Platz für die Checkbox */
   box-sizing: border-box;
@@ -72,7 +75,7 @@ form {
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  width: 320px;
+  min-width: 320px;
   animation: fadeIn 0.5s ease;
 }
 

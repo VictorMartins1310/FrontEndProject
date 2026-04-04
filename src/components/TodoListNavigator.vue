@@ -12,19 +12,19 @@ const viewTaskMode = [ "Today", "Week", "Month", "All" ],
         "September", "October", "November", "Dezember"
     ],
 
-    emit = defineEmits(['selectedViewTaskMode', 'selectedDay'])
+    emit = defineEmits(['selectedViewTaskMode', 'selectedDay']),
 
-let selectedDayOutput: string;
+    selectedDayOutput = ref(formatDateToISOString(selectedDay.value));
 
 function setNextDay(){
   selectedDay.value = nextDay(selectedDay.value);
-  selectedDayOutput = formatDateToISOString(selectedDay.value);
+  selectedDayOutput.value = formatDateToISOString(selectedDay.value);
   emit('selectedDay', selectedDay.value);
 }
 
 function setDayBefore(){
   selectedDay.value = dayBefore(selectedDay.value);
-  selectedDayOutput = formatDateToISOString(selectedDay.value);
+  selectedDayOutput.value = formatDateToISOString(selectedDay.value);
   emit('selectedDay', selectedDay.value);
 }
 

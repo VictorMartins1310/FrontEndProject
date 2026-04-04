@@ -43,6 +43,11 @@ function switchItemForm(value: boolean) {
 </template>
 
 <style scoped>
+main {
+  width: 100vw;
+  min-height: 100vwh;
+}
+
 header {
   line-height: 1.5;
   max-height: 100vh;
