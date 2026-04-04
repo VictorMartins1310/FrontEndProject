@@ -10,7 +10,7 @@ export function getLastDayWeek(selectedDay: Date): Date {
 
 
 export function getFirstDayMonth(selectedDay: Date): Date {
-    let
+    const
         year = selectedDay.getFullYear(),
         month = selectedDay.getMonth(),
         day = 1;
@@ -65,7 +65,7 @@ export function dayBefore(selectedDay: Date): Date {
  * @returns Next Day
  */
 export function nextDay(selectedDay: Date): Date {
-    let
+    const
         year = selectedDay.getFullYear(),
         month = selectedDay.getMonth(),
         day = selectedDay.getDate() + 1;
@@ -73,7 +73,7 @@ export function nextDay(selectedDay: Date): Date {
 }
 
 export function nextWeek(selectedDay: Date): Date {
-    let
+    const
         year = selectedDay.getFullYear(),
         month = selectedDay.getMonth(),
         day = selectedDay.getDate() + 7;
@@ -82,7 +82,7 @@ export function nextWeek(selectedDay: Date): Date {
 
 
 export function weekBefore(selectedDay: Date): Date {
-    let
+    const
         year = selectedDay.getFullYear(),
         month = selectedDay.getMonth(),
         day = selectedDay.getDate() - 7;
@@ -91,7 +91,7 @@ export function weekBefore(selectedDay: Date): Date {
 
 
 export function nextMonth(selectedDay: Date): Date {
-    let
+    const
         year = selectedDay.getFullYear(),
         month = selectedDay.getMonth() + 1,
         day = selectedDay.getDate();
@@ -99,7 +99,7 @@ export function nextMonth(selectedDay: Date): Date {
 }
 
 export function monthBefore(selectedDay: Date): Date {
-    let
+    const
         year = selectedDay.getFullYear(),
         month = selectedDay.getMonth() - 1,
         day = selectedDay.getDate();
@@ -124,4 +124,3 @@ export function isInMonth(selectedDay: Date, date2Proof: Date): boolean {
         return true;
     return false;
 }
-
