@@ -37,14 +37,13 @@ function switchItemForm(value: boolean) {
   <LoginForm v-if="!auth.isUserAuthenticated && showLoginOptions " />
   <main v-else>
     <SideBar v-on:show-new-Item-Form="switchItemForm" />
-    <RouterView v-if="route.path==='/'" v-bind:showNewItemForm="visibleNewItemForm" v-on:show-new-item-form="switchItemForm" v-on:newNotification="sendNotification" />
-    <RouterView v-else />
+    <RouterView v-bind:showNewItemForm="visibleNewItemForm" v-on:show-new-item-form="switchItemForm" v-on:newNotification="sendNotification" />
   </main>
 </template>
 
 <style scoped>
 main {
-  width: 100vw;
+  /* max-width: 100vw; */
   min-height: 100vwh;
 }
 

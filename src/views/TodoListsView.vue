@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useTodoStore } from '@/stores/todoLists'
 import { computed, onMounted, reactive, ref } from 'vue';
-import { Frequency, type ShoppingList, type TaskList, type TodoListItem } from '@/types';
+import { type ShoppingList, type TaskList, type TodoListItem } from '@/types';
 import NewList from '@/components/NewList.vue';
 import TodoItem from '@/components/TodoItem.vue';
-import { isInWeek } from '@/plugins/dates';
 import TodosDaily from '@/components/TodosDaily.vue';
 import TodoListNavigator from '@/components/TodoListNavigator.vue';
 
@@ -102,9 +101,6 @@ async function getData(inputData: TodoListItem) {
   emit('showNewItemForm', false);
 }
 
-const isModeDev = () => {
-  return import.meta.env.DEV;
-}
 const mode = ref(false);
 
 function getEmitedViewTaskMode(value: string){
@@ -117,7 +113,8 @@ function getEmitedDay(value: Date){
 
 </script>
 <template>
-  <TodoListNavigator v-on:selectedViewTaskMode="getEmitedViewTaskMode" v-on:selected-day="getEmitedDay" />
+  <div>
+  <TodoListNavigator class="xy" v-on:selectedViewTaskMode="getEmitedViewTaskMode" v-on:selected-day="getEmitedDay" />
   <input type="checkbox" v-on:click="mode = !mode" />
   <div v-if="mode">
     <NewList v-if="props.showNewItemForm || todoList.length === 0" class="rounded" v-on:send-new-item="getData" />
@@ -174,7 +171,7 @@ function getEmitedDay(value: Date){
       <tr v-for="(todoItem, index) in completedTasks" v-bind:key="todoItem.todoID" >
         <td style="text-align: center; width: min-content;"><h1>{{ index + 1 }}</h1></td>
         <td class="todoItemCell">
-          <TodoItem v-bind:type="todoItem.type" v-bind:id="todoItem.todoID" />
+          <TodoItem v-bind:type="todoItem.type" v-bind:id="todoItem.todoID" v-bind:selected-day="selectedDay" />
         </td>
         <td v-if="todoItem.type === 'ShoppingList' || todoItem.type === 'Task'">
           <div style="padding: 15px; display:grid; gap: 5px;">
@@ -185,6 +182,7 @@ function getEmitedDay(value: Date){
       </tr>
     </tbody>
   </table>
+  </div>
 </template>
 
 <style lang="css" scoped>
@@ -234,39 +232,41 @@ button {
   cursor: pointer;
   font-weight: 600;
 }
-button:hover { background: #3b7ac0; }
+button:hover {
+  background: #3b7ac0;
+}
 
+tbody{
+  padding: 10px;
+  background-color: burlywood;
+}
 
-  tbody{
-    padding: 10px;
-    background-color: burlywood;
-  }
+tbody.rounded tr:first-child td:first-child {
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+  border-top-left-radius: 20px;
+}
 
-  tbody.rounded tr:first-child td:first-child {
-    border-top: 1px solid black;
-    border-left: 1px solid black;
-    border-top-left-radius: 20px;
-  }
+tbody.rounded tr:first-child td:last-child {
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+  border-top-right-radius: 20px;
+}
 
-  tbody.rounded tr:first-child td:last-child {
-    border-top: 1px solid black;
-    border-right: 1px solid black;
-    border-top-right-radius: 20px;
-  }
+tbody.rounded tr:last-child td:first-child {
+  border-bottom: 1px solid black;
+  border-bottom-left-radius: 20px;
+}
 
-  tbody.rounded tr:last-child td:first-child {
-    border-bottom: 1px solid black;
-    border-bottom-left-radius: 20px;
-  }
+tbody.rounded tr:last-child td:last-child {
+  border-bottom: 1px solid black;
+  border-bottom-right-radius: 20px;
+}
 
-  tbody.rounded tr:last-child td:last-child {
-    border-bottom: 1px solid black;
-    border-bottom-right-radius: 20px;
-  }
-  tbody.rounded tr td:last-child {
-    border-right: 1px solid black;
-  }
-    tbody.rounded tr td:first-child {
-    border-left: 1px solid black;
-  }
+tbody.rounded tr td:last-child {
+  border-right: 1px solid black;
+}
+tbody.rounded tr td:first-child {
+  border-left: 1px solid black;
+}
 </style>
