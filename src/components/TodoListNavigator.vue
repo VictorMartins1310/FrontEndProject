@@ -67,7 +67,7 @@ function changedSelectedDay(event: Event){
 </script>
 <template>
   <div class="navBox">
-    <div style="max-width: 100%; display: flex; align-items: center;">
+    <div style="width: 100%; display: flex; justify-content: center; margin-bottom: 1rem;">
     <select v-model="selected" style="width: fit-content;" v-on:change="emitselectedViewTaskMode">
       <option v-for="item in viewTaskMode" :key="item" :value="item">{{ item }}</option>
     </select>
@@ -94,15 +94,17 @@ function changedSelectedDay(event: Event){
 <style lang="css" scoped>
 .navBox {
   padding: 20px;
-  max-width: 80vw;
+  max-width: 100vw;
+  width: fit-content;
+  width: fit-content;
   border: 2px solid black;
   border-radius: 3vw;
   background-color: cornflowerblue;
   display: flex;
+  /* flex-direction: column; */
+  justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
-  margin-left: 0;
-  margin-right: 0;
-  top: 0;
 }
 
 .nav {

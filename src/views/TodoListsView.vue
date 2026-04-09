@@ -113,7 +113,7 @@ function getEmitedDay(value: Date){
 
 </script>
 <template>
-  <div>
+  <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
   <TodoListNavigator class="xy" v-on:selectedViewTaskMode="getEmitedViewTaskMode" v-on:selected-day="getEmitedDay" />
   <input type="checkbox" v-on:click="mode = !mode" />
   <div v-if="mode">
