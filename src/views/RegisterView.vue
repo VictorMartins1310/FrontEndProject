@@ -1,27 +1,16 @@
 <script setup lang="ts">
 
-import { ref } from 'vue'
+import { ref } from 'vue';
 import { useRouter }  from 'vue-router';
 
-const router = useRouter();
-const formData = ref({
-  email: "",
-  password: "badPassword"
-} );
-
-
-async function registerOld(){
-  const BodyData = {
-    method: 'POST',
-    body: JSON.stringify(formData.value),
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  }
-
-  const response = await fetch( import.meta.env.VITE_HOMELINK +"/users/register", BodyData);
-  return await response.json();
-}
+const 
+  router = useRouter(),
+  formData = ref({
+    email: "",
+    password: "badPassword"
+  }),
+  vTypePW = ref("password"),
+  registered = ref(false);
 
 async function registerOnSupabe(){
   const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/signup`, {
@@ -37,27 +26,23 @@ async function registerOnSupabe(){
 
 async function register(){
   let data;
-  // data = await registerOnSupabe();
-  // console.log(data);
-  data = await registerOld();
+  data = await registerOnSupabe();
   console.log(data);
   registered.value = true;
- setTimeout(() => { router.push('/') }, 3000);
+  setTimeout(() => { router.push('/') }, 3000);
 }
 
 async function generatePW() {
-  const proxy: string = 'https://corsproxy.io/';
-  const server: string = 'https://passwordwolf.com/api/';
-  const link: string = proxy + server + "?repeat=1&length=8&special=off";
-  const data = await fetch(link);
-  const response = await data.json();
+  const 
+    proxy: string = 'https://corsproxy.io/',
+    server: string = 'https://passwordwolf.com/api/',
+    link: string = proxy + server + "?repeat=1&length=8&special=off",
+    data = await fetch(link),
+    response = await data.json();
   formData.value.password = response[0].password;
   vTypePW.value = "Text";
   return response;
 }
-
-const vTypePW = ref("password");
-const registered = ref(false);
 
 </script>
 
