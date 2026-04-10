@@ -182,91 +182,10 @@ function getEmitedDay(value: Date){
       </tr>
     </tbody>
   </table>
+  <h1 v-if="selected === 'Today'">{{ selected }}</h1>
+  <TodosDaily v-if="selected === 'Today'" v-bind:selected-day="selectedDay" />
   </div>
 </template>
 
-<style lang="css" scoped>
-tbody.rounded tr:hover {
-  scale: 1.05;
-  border: 1px solid black;
-  background-color: hsla(160, 100%, 47%, 1);
-}
-
-tbody.rounded tr:hover td:first-child {
-  border: 1px solid black;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-}
-
-tbody.rounded tr:hover td:last-child {
-  border: 1px solid black;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-}
-
-button.delete {
-  font-weight: bold;
-  border-radius: 20%;
-  padding: 6px;
-  background-color:#ff4d4d;
-}
-
-button.delete:hover {
-  background-color: #d93636;
-}
-
-.todoItemCell {
-  border: 1px solid black;
-  background-color: aliceblue;
-  padding: 10px;
-  min-width: 540px;
-  align-items: center;
-}
-
-button { 
-  background: #4a90e2;
-  color: white;
-  border: none;
-  /* padding: 0.5rem 1rem;
-  border-radius: 8px; */
-  cursor: pointer;
-  font-weight: 600;
-}
-button:hover {
-  background: #3b7ac0;
-}
-
-tbody{
-  padding: 10px;
-  background-color: burlywood;
-}
-
-tbody.rounded tr:first-child td:first-child {
-  border-top: 1px solid black;
-  border-left: 1px solid black;
-  border-top-left-radius: 20px;
-}
-
-tbody.rounded tr:first-child td:last-child {
-  border-top: 1px solid black;
-  border-right: 1px solid black;
-  border-top-right-radius: 20px;
-}
-
-tbody.rounded tr:last-child td:first-child {
-  border-bottom: 1px solid black;
-  border-bottom-left-radius: 20px;
-}
-
-tbody.rounded tr:last-child td:last-child {
-  border-bottom: 1px solid black;
-  border-bottom-right-radius: 20px;
-}
-
-tbody.rounded tr td:last-child {
-  border-right: 1px solid black;
-}
-tbody.rounded tr td:first-child {
-  border-left: 1px solid black;
-}
+<style lang="css" src="../assets/TodoList.css">
 </style>
