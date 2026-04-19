@@ -9,7 +9,7 @@ const todoStore = useTodoStore();
 const shoppingList = ref<ShoppingList>({} as ShoppingList);
 const productList = ref<ShoppingListItem []>([] as ShoppingListItem[]);
 const loaded = ref(false);
-let creationDate: Date = new Date();
+let doOnDay: Date = new Date();
 
 const nProdutcs = computed(() => {
   return productList.value.length
@@ -40,7 +40,7 @@ async function addFromEmit(newShopItem: ShoppingListItem) {
 
 onMounted(async () => {
   shoppingList.value = await todoStore.getShoppingList(props.todoID).finally(() => loaded.value = true);
-  creationDate = new Date(shoppingList.value.creationDate);
+  doOnDay = new Date(shoppingList.value.doOnDay);
       shoppingList.value.products.forEach(eleme => {
       productList.value.push(eleme);
     })
@@ -69,7 +69,7 @@ const addNewProduct = ref(false);;
 <template>
   <h2>
     {{ shoppingList.marketName }}
-    {{ creationDate.toDateString() }}
+    {{ doOnDay.toDateString() }}
   <input v-if="nProdutcs > 0" type="button" v-on:click="showProductList()" v-bind:value="isProductListVisible.text"  />
   </h2>
   <h1 v-if="!loaded">Loading...</h1>
