@@ -106,7 +106,6 @@ export function monthBefore(selectedDay: Date): Date {
     return new Date(year, month, day);
 }
 
-
 /**
  * Verify if Date is in that week
  * @param selectedDay 
@@ -123,4 +122,11 @@ export function isInMonth(selectedDay: Date, date2Proof: Date): boolean {
     if (date2Proof >= getFirstDayMonth(selectedDay) && selectedDay <= getLastDayMonth(selectedDay))
         return true;
     return false;
+}
+
+export function isSameDate(date1: Date, date2: Date): boolean {
+  if (date1.getDate() != date2.getDate()) return false;
+  if (date1.getMonth() != date2.getMonth()) return false;
+  if (date1.getFullYear() != date2.getFullYear()) return false;
+  return true;
 }
