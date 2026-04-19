@@ -96,15 +96,14 @@ function changedSelectedDay(event: Event){
   padding: 20px;
   max-width: 100vw;
   width: fit-content;
-  width: fit-content;
   border: 2px solid black;
-  border-radius: 3vw;
-  background-color: cornflowerblue;
+  border-radius: 3rem;
   display: flex;
-  /* flex-direction: column; */
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+  background-color: cornflowerblue;
+  background-color: hsla(160, 100%, 47%, 1);
 }
 
 .nav {
@@ -112,7 +111,6 @@ function changedSelectedDay(event: Event){
   flex-direction: row;
   text-align: center;
   justify-content: center;
-  /* min-width: 800px; */
   gap: 40px;
 }
 
