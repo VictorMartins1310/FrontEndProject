@@ -23,7 +23,7 @@ function sendNotification(titel: string, body: string) {
 }
 
 const showLoginOptions = computed(() => {
-  return route.path != '/register' && route.path != '/about';
+  return route.path != '/register';
 })
 
 const visibleNewItemForm = ref(false);

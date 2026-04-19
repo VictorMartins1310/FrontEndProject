@@ -17,7 +17,6 @@ if (import.meta.env.DEV) {
   password.value = "badPassword";
 }
 
-
 </script>
 
 <template>
@@ -30,7 +29,6 @@ if (import.meta.env.DEV) {
         <input name="pwvisibility" class="toggle-checkbox" v-model="showPassword" type="checkbox" :title="showPassword ? 'Verbergen' : 'Anzeigen'" />
       </div>
       <button type="submit">Einloggen</button>
-      <RouterLink to="/about">About</RouterLink>
       <RouterLink to="/register">Register Here</RouterLink>
     </form>
   </div>
