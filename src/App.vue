@@ -1,12 +1,40 @@
 <script setup lang="ts">
-import { RouterView, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useAuthStore } from './stores/auth';
 import LoginForm from './components/LoginForm.vue';
-import { computed, ref } from 'vue';
-import SideBar from './components/SideBar.vue';
+import { computed, ref, onMounted, onUnmounted, type Ref } from 'vue';
+import DesktopView from './views/AppViews/DesktopView.vue';
+import PhoneView from './views/AppViews/PhoneView.vue';
+import TabletView from './views/AppViews/TabletView.vue';
 
-const auth = useAuthStore();
-const route = useRoute();
+const 
+  auth = useAuthStore(),
+  route = useRoute(),
+  
+  breite = ref(window.innerWidth),
+  isDesktop = ref(false),
+  isPhone = ref(false),
+  isTablet = ref(false),
+  appTitle = ref(getElementByID('appTitle')),
+
+  showLoginOptions = computed(() => {
+    return route.path != '/register';
+  })
+
+function getElementByID(elementID: string): HTMLElement {
+  return document.getElementById(elementID)!;
+}
+
+function setViewMode(){
+  breite.value = window.innerWidth;
+  isDesktop.value = false;
+  isTablet.value = false;
+  isPhone.value = false;
+  if (breite.value > 991) isDesktop.value = true;
+  else if (breite.value < 768) isPhone.value = true;
+  else isTablet.value = true;
+  console.log('Breite: ' + breite.value + 'px, isDesktop: ' + isDesktop.value +', isTablet: ' + isTablet.value + ', isPhone: ' + isPhone.value);
+}
 
 Notification.requestPermission().then((permission) => {
   console.log('Permission: ' + permission)
@@ -15,35 +43,22 @@ Notification.requestPermission().then((permission) => {
   }
 })
 
-function sendNotification(titel: string, body: string) {
-  new Notification(titel, {
-    body: body,
-    icon: '/favicon.ico', // optional
-  })
-}
-
-const showLoginOptions = computed(() => {
-  return route.path != '/register';
+onMounted(() => {
+  console.log("App Title: ", appTitle.value.innerText);
+  appTitle.value.innerText = "TODO APP 0.1";
+  setViewMode();
+  window.addEventListener('resize', setViewMode);
 })
 
-const visibleNewItemForm = ref(false);
-
-function switchItemForm(value: boolean) {
-  visibleNewItemForm.value = value;
-  console.log(visibleNewItemForm.value);
-}
+onUnmounted(() => {
+  window.removeEventListener('resize', setViewMode);
+})
 </script>
 <template>
   <LoginForm v-if="!auth.isUserAuthenticated && showLoginOptions " />
-  <main v-else>
-    <SideBar v-on:show-new-Item-Form="switchItemForm" />
-    <RouterView v-bind:showNewItemForm="visibleNewItemForm" v-on:show-new-item-form="switchItemForm" v-on:newNotification="sendNotification" />
-  </main>
+  <div v-else>
+    <DesktopView v-if="isDesktop" />
+    <PhoneView v-else-if="isPhone" />
+    <TabletView v-else />
+  </div>
 </template>
-
-<style scoped>
-main {
-  min-height: calc(100vwh-2rem);
-  display: flex;
-}
-</style>

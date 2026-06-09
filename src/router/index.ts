@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TodoListsView from '@/views/TodoListsView.vue';
+import AccountView from '@/views/AccountView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +28,11 @@ const router = createRouter({
       // component: () => import('../views/RegisterView.vue'),
       component: () => import('../views/RegisterView.vue')
     },
+    {
+      path: '/account',
+      name: 'account',
+      component: AccountView
+    }
   ],
 })
 
