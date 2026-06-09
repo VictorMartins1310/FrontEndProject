@@ -72,22 +72,55 @@ function changedSelectedDay(event: Event){
       <option v-for="item in viewTaskMode" :key="item" :value="item">{{ item }}</option>
     </select>
     </div>
-    <div v-if="selected === viewTaskMode[0]" class="nav">
-      <button v-on:click="setDayBefore()">⬅️ Day Before</button>
+    <div v-if="selected === viewTaskMode[0]" class="nav" style="font-size: xx-large;">
+      <button class="btn-test" v-on:click="setDayBefore()">
+        <i class="bi bi-arrow-left-circle "></i>
+        <i class="bi bi-arrow-left-circle-fill "></i>
+        <span>Day Before</span>
+      </button>
       <input type="date" v-bind:value="selectedDayOutput" v-on:change="changedSelectedDay" />
-      <button v-on:click="setNextDay()">Next Day ➡️</button>
+      <button class="btn-test" v-on:click="setNextDay()">
+        <span>Next Day</span>
+        <i class="bi bi-arrow-right-circle "></i>
+        <i class="bi bi-arrow-right-circle-fill "></i>
+      </button>
     </div>
 
     <div v-if="selected === viewTaskMode[1]" class="nav">
-      <button v-on:click="setWeekBefore()">⬅️ Week Before</button>
-      <h1>{{ getFirstDayWeek(selectedDay).toDateString() }}<br />↔<br />{{ getLastDayWeek(selectedDay).toDateString() }}</h1>
-      <button v-on:click="setNextWeek()">Next Week ➡️</button>
+      <button class="btn-test" v-on:click="setWeekBefore()">
+        <i class="bi bi-arrow-left-circle "></i>
+        <i class="bi bi-arrow-left-circle-fill "></i>
+        <span>Week Before</span>
+      </button>
+      <h1>
+        {{ getFirstDayWeek(selectedDay).toDateString() }}
+        <br />
+        <i class="bi bi-arrows"></i>
+        <i class="bi bi-arrows-vertical"></i>
+        <i class="bi bi-arrow-down-up"></i>
+        <i class="bi bi-arrow-left-right"></i>
+        <br />
+        {{ getLastDayWeek(selectedDay).toDateString() }}
+      </h1>
+      <button class="btn-test" v-on:click="setNextWeek()">
+        <span>Next Week</span>
+        <i class="bi bi-arrow-right-circle "></i>
+        <i class="bi bi-arrow-right-circle-fill "></i>
+      </button>
     </div>
 
     <div v-if="selected === viewTaskMode[2]" class="nav">
-      <button v-on:click="setMonthBefore()">⬅️ Month Before</button>
+      <button class="btn-test" v-on:click="setMonthBefore()">
+        <i class="bi bi-arrow-left-circle "></i>
+        <i class="bi bi-arrow-left-circle-fill "></i>
+        <span>Month Before</span>
+      </button>
       <h1>{{ monthList[selectedDay.getMonth()] }} {{ selectedDay.getFullYear() }}</h1>
-      <button v-on:click="setNextMonth()">Next Month ➡️</button>
+      <button class="btn-test" v-on:click="setNextMonth()">
+        <span>Next Month</span>
+        <i class="bi bi-arrow-right-circle "></i>
+        <i class="bi bi-arrow-right-circle-fill "></i>
+      </button>
     </div>
   </div>
 </template>
@@ -116,5 +149,49 @@ function changedSelectedDay(event: Event){
 
 input[type=date]{
   font-size: x-large;
+}
+
+.btn-test {
+  --margin-icon-span: 1rem;
+}
+
+.btn-test i.bi.bi-arrow-left-circle-fill {
+  display: none;
+  margin-right: var(--margin-icon-span);
+}
+
+.btn-test i.bi.bi-arrow-left-circle {
+  margin-right: var(--margin-icon-span);
+  display: inline;
+}
+
+.btn-test:hover i.bi.bi-arrow-left-circle {
+  margin-right: var(--margin-icon-span);
+  display: none;
+}
+
+.btn-test:hover i.bi.bi-arrow-left-circle-fill {
+  margin-right: var(--margin-icon-span);
+  display: inline;
+}
+
+.btn-test i.bi.bi-arrow-right-circle-fill {
+  display: none;
+  margin-left: var(--margin-icon-span);
+}
+
+.btn-test i.bi.bi-arrow-right-circle {
+  margin-left: var(--margin-icon-span);
+  display: inline;
+}
+
+.btn-test:hover i.bi.bi-arrow-right-circle {
+  margin-left: var(--margin-icon-span);
+  display: none;
+}
+
+.btn-test:hover i.bi.bi-arrow-right-circle-fill {
+  margin-left: var(--margin-icon-span);
+  display: inline;
 }
 </style>
