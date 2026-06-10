@@ -127,6 +127,7 @@ function changedSelectedDay(event: Event){
 <style lang="css" scoped>
 .navBox {
   padding: 20px;
+  min-width: 40vw;
   max-width: 100vw;
   width: fit-content;
   border: 2px solid black;
