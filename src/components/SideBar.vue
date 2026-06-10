@@ -32,7 +32,7 @@ defineEmits(['showNewItemForm']);
         <i class="bi bi-clipboard-check"></i>
         <span class="d-none d-sm-inline ms-2">To-Do Liste</span>
       </RouterLink>
-      <RouterLink to="/" :class="navItemStyle" v-on:click="$emit('showNewItemForm', true)">
+      <RouterLink to="/add" :class="navItemStyle" v-on:click="$emit('showNewItemForm', true)">
         <i class="bi bi-plus"></i>
         <span class="d-none d-sm-inline ms-2">Add</span>
       </RouterLink>
@@ -68,7 +68,8 @@ defineEmits(['showNewItemForm']);
   color: white;
   width: fit-content;
   max-width: 22ch;
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
   font-weight: bold;
   padding: 1rem;
   gap: 1rem;
