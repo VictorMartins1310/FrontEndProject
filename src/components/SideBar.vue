@@ -3,6 +3,14 @@ import { useAuthStore } from '@/stores/auth';
 import { RouterLink } from 'vue-router';
 
 const auth = useAuthStore();
+
+const navList: {path: string, element: string, class: string}[] = [
+  {path: "/", element: "To-Do Liste", class: "bi bi-clipboard-check"},
+  {path: "/add", element: "Add", class: "bi bi-plus"},
+  {path: "/", element: "List", class: "bi bi-clipboard-check"},
+  {path: "/account", element: "My Account", class: "bi bi-person-circle"}
+];
+
 defineEmits(['showNewItemForm']);
   /** 
    * Haves a space at the beginning and the end to make it easier to concatenate with other classes
@@ -28,21 +36,9 @@ defineEmits(['showNewItemForm']);
       </div>
     </nav>
     <nav style="height: fit-content;">
-      <RouterLink to="/" :class="navItemStyle">
-        <i class="bi bi-clipboard-check"></i>
-        <span class="d-none d-sm-inline ms-2">To-Do Liste</span>
-      </RouterLink>
-      <RouterLink to="/add" :class="navItemStyle" v-on:click="$emit('showNewItemForm', true)">
-        <i class="bi bi-plus"></i>
-        <span class="d-none d-sm-inline ms-2">Add</span>
-      </RouterLink>
-      <RouterLink to="/" :class="navItemStyle">
-        <i class="bi bi-clipboard-check"></i>
-        <span class="d-none d-sm-inline ms-2">List</span>
-      </RouterLink>
-      <RouterLink to="/account" :class="navItemStyle">
-        <i class="bi bi-person-circle"></i>
-        <span class="d-none d-sm-inline ms-2">My Account</span>
+      <RouterLink v-for="navElem in navList" :to="navElem.path" :class="navItemStyle">
+        <i :class="navElem.class"></i>
+        <span class="d-none d-sm-inline ms-2">{{ navElem.element }}</span>
       </RouterLink>
     </nav>
     <nav class="sticky-bottom border-top">
