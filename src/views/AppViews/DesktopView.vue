@@ -36,6 +36,6 @@ function switchItemForm(value: boolean) {
 }
 
 main {
-    background-color: #8f8f8f;
+    background-color: var(--bg-color);
 }
 </style>

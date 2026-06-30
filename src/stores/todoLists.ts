@@ -10,6 +10,14 @@ export const useTodoStore = defineStore('todoLists', () => {
     shoppingListsLink : string = todoListsLink + "/shoppinglist",
 
     todoList = reactive<TodoListItem[]>([]),
+
+
+    //Check if follow makes sense to develop
+
+    getItemsAll: number = 2,
+    getItemsCompleted: number = 0,
+    getItemsUncomplete: number = 1,
+
     
     selectedDay = ref(new Date());
 
@@ -25,8 +33,16 @@ export const useTodoStore = defineStore('todoLists', () => {
   async function loadItems() {
     const length = todoList.length;
     todoList.splice(0, length)
-    const { response, data } = await API.getRequest(todoListsLink + "?completed=1");
+    const { response, data } = await API.getRequest(todoListsLink + "?completed=2");
     return { data };
+  }
+
+  async function loadAllItems(){
+    const { data } = await loadItems();
+    const length = data.length;
+    for (let i = 0; i<length; i++){
+      todoList.push(data[i]);
+    }
   }
 
   async function loadTodayItems(selectedDay: Date) {
@@ -129,7 +145,7 @@ export const useTodoStore = defineStore('todoLists', () => {
   }
 
   return {
-    todoList, selectedDay,
-    loadItems, loadTodayItems, newShoppingList, deleteShoppingList,deleteTodoList, getTaskList, getShoppingList, setTaskDone, addTaskItem, getProductTypes, addShopItem
+    todoList, selectedDay, loadItems, loadTodayItems, loadAllItems,
+    newShoppingList, deleteShoppingList,deleteTodoList, getTaskList, getShoppingList, setTaskDone, addTaskItem, getProductTypes, addShopItem
   }
 });

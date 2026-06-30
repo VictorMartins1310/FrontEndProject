@@ -5,6 +5,7 @@
   /* margin: 0 auto; */
   /* padding: 1rem; */
   font-weight: normal;
+  background-color: var(--bg-color);
 }
 
 a {
@@ -23,7 +24,7 @@ a {
 
 @media (min-width: 1024px) {
   #app {
-    background-color: blueviolet;
+    background-color: var(--bg-color);
     min-width: 1024px;
     width: 100vw;
     transition: background-color 7s ease;
