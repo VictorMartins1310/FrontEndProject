@@ -9,13 +9,12 @@
     "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "preview": "vite preview",
     "type-check": " vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
-    "build": "vite build",
-    "build2backend": "vite build --outDir ../BackEndProject/src/main/resources/static"
+    "build": "vite build"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
